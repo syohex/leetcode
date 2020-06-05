@@ -22,7 +22,7 @@ int lengthOfLongestSubstring(const std::string &s) {
     while (substr_len > 0) {
         for (size_t i = 0; i + substr_len <= s.size(); ++i) {
             for (size_t j = i; j < i + substr_len - 1; ++j) {
-                const auto& indexes = m[s[j]];
+                const auto &indexes = m[s[j]];
                 for (const auto index : indexes) {
                     if (index <= j) {
                         continue;
@@ -35,7 +35,7 @@ int lengthOfLongestSubstring(const std::string &s) {
 
             goto expand;
 
-next_substr:;
+        next_substr:;
         }
 
         substr_len = (max + substr_len) / 2;
@@ -44,7 +44,7 @@ next_substr:;
         }
         continue;
 
-expand:;
+    expand:;
         max = substr_len;
         substr_len = (max + limit) / 2;
         if (max == substr_len) {
