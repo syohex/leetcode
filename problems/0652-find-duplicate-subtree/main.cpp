@@ -1,6 +1,8 @@
 #include <cassert>
 #include <functional>
 #include <vector>
+#include <map>
+#include <algorithm>
 
 struct TreeNode {
     int val;
@@ -19,27 +21,32 @@ struct TreeNode {
 };
 
 std::vector<TreeNode *> findDuplicateSubtrees(TreeNode *root) {
-    std::vector<TreeNode *> candidates;
     if (root == nullptr) {
-        return candidates;
+        return std::vector<TreeNode *>{};
     }
 
-    std::function<void(TreeNode * node, std::vector<TreeNode *> & v)> f;
-    f = [&f](TreeNode *node, std::vector<TreeNode *> &v) {
-        v.push_back(node);
+    std::map<int, std::vector<TreeNode *>> v;
+    std::function<int(TreeNode * node, int depth)> f;
+    f = [&f, &v](TreeNode *node, int depth) -> int {
         if (node->left == nullptr && node->right == nullptr) {
-            return;
+            v[0].push_back(node);
+            return depth;
         }
 
+        int leftDepth = 0, rightDepth = 0;
         if (node->left != nullptr) {
-            f(node->left, v);
+            leftDepth = f(node->left, depth + 1);
         }
         if (node->right != nullptr) {
-            f(node->right, v);
+            rightDepth = f(node->right, depth + 1);
         }
+
+        int d = std::max(leftDepth, rightDepth);
+        v[d - depth].push_back(node);
+        return d;
     };
 
-    f(root, candidates);
+    f(root, 0);
 
     std::function<bool(TreeNode *, TreeNode *)> eq;
     eq = [&eq](TreeNode *n1, TreeNode *n2) {
@@ -61,21 +68,27 @@ std::vector<TreeNode *> findDuplicateSubtrees(TreeNode *root) {
     };
 
     std::vector<TreeNode *> ret;
-    for (size_t i = 0; i < candidates.size() - 1; ++i) {
-        if (candidates[i] == nullptr) {
+    for (auto &it : v) {
+        std::vector<TreeNode *> &nodes = it.second;
+        if (nodes.size() <= 1) {
             continue;
         }
-        bool hasMatch = false;
-        for (size_t j = i + 1; j < candidates.size(); ++j) {
-            if (candidates[j] == nullptr) {
+        for (size_t i = 0; i < nodes.size() - 1; ++i) {
+            if (nodes[i] == nullptr) {
                 continue;
             }
-            if (eq(candidates[i], candidates[j])) {
-                if (!hasMatch) {
-                    ret.push_back(candidates[i]);
-                    hasMatch = true;
+            bool hasMatch = false;
+            for (size_t j = i + 1; j < nodes.size(); ++j) {
+                if (nodes[j] == nullptr) {
+                    continue;
                 }
-                candidates[j] = nullptr;
+                if (eq(nodes[i], nodes[j])) {
+                    if (!hasMatch) {
+                        ret.push_back(nodes[i]);
+                        hasMatch = true;
+                    }
+                    nodes[j] = nullptr;
+                }
             }
         }
     }
@@ -118,8 +131,8 @@ int main() {
         t1->left = new TreeNode(4);
         TreeNode *t2 = new TreeNode(4);
 
-        assert(Equal(ret[0], t1));
-        assert(Equal(ret[1], t2));
+        assert((Equal(ret[0], t1) || Equal(ret[0], t2)));
+        assert((Equal(ret[1], t1) || Equal(ret[1], t2)));
         delete tree;
         delete t1;
         delete t2;
