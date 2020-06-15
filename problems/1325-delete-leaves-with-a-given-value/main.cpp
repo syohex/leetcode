@@ -54,8 +54,8 @@ TreeNode *removeLeafNodes(TreeNode *root, int target) {
         return nullptr;
     }
 
-    std::function<bool(TreeNode * *node, int val)> f;
-    f = [&f](TreeNode **node, int val) {
+    std::function<bool(TreeNode **, int, int)> f;
+    f = [&f](TreeNode **node, int val, int depth) {
         TreeNode *n = *node;
         if (n->left == nullptr && n->right == nullptr) {
             bool match = n->val == val;
@@ -68,7 +68,7 @@ TreeNode *removeLeafNodes(TreeNode *root, int target) {
 
         bool deleteLeft = true;
         if (n->left != nullptr) {
-            deleteLeft = f(&(n->left), val);
+            deleteLeft = f(&(n->left), val, depth + 1);
             if (deleteLeft) {
                 n->left = nullptr;
             }
@@ -76,21 +76,23 @@ TreeNode *removeLeafNodes(TreeNode *root, int target) {
 
         bool deleteRight = true;
         if (n->right != nullptr) {
-            deleteRight = f(&(n->right), val);
+            deleteRight = f(&(n->right), val, depth + 1);
             if (deleteRight) {
                 n->right = nullptr;
             }
         }
 
         if (n->val == val && deleteLeft && deleteRight) {
-            delete n;
+            if (depth != 0) {
+                delete n;
+            }
             return true;
         }
 
         return false;
     };
 
-    bool deleteRoot = f(&root, target);
+    bool deleteRoot = f(&root, target, 0);
     if (deleteRoot) {
         return nullptr;
     }
