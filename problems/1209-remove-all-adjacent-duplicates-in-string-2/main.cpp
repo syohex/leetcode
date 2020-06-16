@@ -9,16 +9,20 @@ std::string removeDuplicates(const std::string &s, int k) {
             ret.append(s.substr(i, count));
             i += count;
         } else {
-            bool duplicated = true;
-            for (int j = 0; j < k - 1; ++j) {
-                if (s[i] != ret[ret.size() - j - 1]) {
-                    duplicated = false;
-                    break;
+            if (ret.back() == s[i]) {
+                bool duplicated = true;
+                for (int j = 0; j < k - 1; ++j) {
+                    if (s[i] != ret[ret.size() - k + 1 + j]) {
+                        duplicated = false;
+                        break;
+                    }
                 }
-            }
 
-            if (duplicated) {
-                ret.resize(ret.size() - (k - 1));
+                if (duplicated) {
+                    ret.resize(ret.size() - (k - 1));
+                } else {
+                    ret.push_back(s[i]);
+                }
             } else {
                 ret.push_back(s[i]);
             }
