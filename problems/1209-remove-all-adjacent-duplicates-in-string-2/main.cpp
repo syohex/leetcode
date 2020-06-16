@@ -3,27 +3,29 @@
 
 std::string removeDuplicates(const std::string &s, int k) {
     std::string ret;
-    for (const auto c : s) {
+    for (size_t i = 0; i < s.size();) {
         if (ret.size() < k - 1) {
-            ret.push_back(c);
+            size_t count = static_cast<size_t>(k - 1) - ret.size();
+            ret.append(s.substr(i, count));
+            i += count;
         } else {
             bool duplicated = true;
-            for (int i = 0; i < k - 1; ++i) {
-                if (c != ret[ret.size() - i - 1]) {
+            for (int j = 0; j < k - 1; ++j) {
+                if (s[i] != ret[ret.size() - j - 1]) {
                     duplicated = false;
                     break;
                 }
             }
 
             if (duplicated) {
-                for (int i = 0; i < k - 1; ++i) {
-                    ret.pop_back();
-                }
+                ret.resize(ret.size() - (k - 1));
             } else {
-                ret.push_back(c);
+                ret.push_back(s[i]);
             }
+            ++i;
         }
     }
+
     return ret;
 }
 
