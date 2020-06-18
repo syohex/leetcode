@@ -16,6 +16,9 @@ int numTeams(const std::vector<int> &rating) {
         if (index >= rating.size()) {
             return;
         }
+        if (rating.size() - index + v.size() < 3) {
+            return;
+        }
 
         if (v.size() == 0) {
             auto vv = v;
