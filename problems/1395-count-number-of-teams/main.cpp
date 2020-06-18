@@ -17,10 +17,35 @@ int numTeams(const std::vector<int> &rating) {
             return;
         }
 
-        auto vv = v;
-        vv.push_back(rating[index]);
-        f(index + 1, vv);
-        f(index + 1, v);
+        if (v.size() == 0) {
+            auto vv = v;
+            vv.push_back(rating[index]);
+            f(index + 1, vv);
+            f(index + 1, v);
+        } else if (v.size() == 1) {
+            if (v[0] != rating[index]) {
+                auto vv = v;
+                vv.push_back(rating[index]);
+                f(index + 1, vv);
+            }
+            f(index + 1, v);
+        } else {
+            if (v[0] < v[1]) {
+                if (v[1] < rating[index]) {
+                    auto vv = v;
+                    vv.push_back(rating[index]);
+                    f(index + 1, vv);
+                }
+            } else if (v[0] > v[1]) {
+                if (v[1] > rating[index]) {
+                    auto vv = v;
+                    vv.push_back(rating[index]);
+                    f(index + 1, vv);
+                }
+            }
+
+            f(index + 1, v);
+        }
     };
 
     f(0, std::vector<int>{});
