@@ -5,53 +5,39 @@
 
 int numTeams(const std::vector<int> &rating) {
     int ret = 0;
-    std::function<void(size_t index, const std::vector<int> &v)> f;
-    f = [&f, &ret, &rating](size_t index, const std::vector<int> &v) {
-        if (v.size() == 3) {
-            if ((v[0] < v[1] && v[1] < v[2]) || (v[0] > v[1] && v[1] > v[2])) {
-                ++ret;
-            }
-            return;
-        }
+    std::function<void(size_t index, size_t count, int a, int b, int c)> f;
+    f = [&f, &ret, &rating](size_t index, size_t count, int a, int b, int c) {
         if (index >= rating.size()) {
             return;
         }
-        if (rating.size() - index + v.size() < 3) {
+        if (rating.size() - index + count < 3) {
             return;
         }
 
-        if (v.size() == 0) {
-            auto vv = v;
-            vv.push_back(rating[index]);
-            f(index + 1, vv);
-            f(index + 1, v);
-        } else if (v.size() == 1) {
-            if (v[0] != rating[index]) {
-                auto vv = v;
-                vv.push_back(rating[index]);
-                f(index + 1, vv);
+        if (count == 0) {
+            f(index + 1, 1, rating[index], 0, 0);
+            f(index + 1, 0, 0, 0, 0);
+        } else if (count == 1) {
+            if (a != rating[index]) {
+                f(index + 1, 2, a, rating[index], 0);
             }
-            f(index + 1, v);
+            f(index + 1, 1, a, 0, 0);
         } else {
-            if (v[0] < v[1]) {
-                if (v[1] < rating[index]) {
-                    auto vv = v;
-                    vv.push_back(rating[index]);
-                    f(index + 1, vv);
+            if (a < b) {
+                if (b < rating[index]) {
+                    ++ret;
                 }
-            } else if (v[0] > v[1]) {
-                if (v[1] > rating[index]) {
-                    auto vv = v;
-                    vv.push_back(rating[index]);
-                    f(index + 1, vv);
+            } else if (a > b) {
+                if (b > rating[index]) {
+                    ++ret;
                 }
             }
 
-            f(index + 1, v);
+            f(index + 1, 2, a, b, 0);
         }
     };
 
-    f(0, std::vector<int>{});
+    f(0, 0, 0, 0, 0);
     return ret;
 }
 
