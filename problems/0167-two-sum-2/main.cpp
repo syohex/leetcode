@@ -4,6 +4,9 @@
 std::vector<int> twoSum(const std::vector<int> &numbers, int target) {
     int limit = static_cast<int>(numbers.size());
     for (int i = 0; i < limit - 1; ++i) {
+        if (numbers[i] + numbers[limit - 1] < target) {
+            continue;
+        }
         for (int j = i + 1; j < limit; ++j) {
             int add = numbers[i] + numbers[j];
             if (add == target) {
