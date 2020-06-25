@@ -2,18 +2,15 @@
 #include <vector>
 
 std::vector<int> findDisappearedNumbers(const std::vector<int> &nums) {
-    std::vector<int> ret(nums.size(), 1);
+    std::vector<int> tmp(nums.size(), 1);
     for (size_t i = 0; i < nums.size(); ++i) {
-        ret[nums[i] - 1] = 0;
+        tmp[nums[i] - 1] = 0;
     }
 
-    int i = 1;
-    for (auto it = ret.begin(); it != ret.end(); ++i) {
-        if (*it == 0) {
-            it = ret.erase(it);
-        } else {
-            *it = i;
-            ++it;
+    std::vector<int> ret;
+    for (size_t i = 0; i < nums.size(); ++i) {
+        if (tmp[i] == 1) {
+            ret.push_back(i + 1);
         }
     }
 
