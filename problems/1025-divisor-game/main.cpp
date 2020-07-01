@@ -15,12 +15,13 @@ bool divisorGame(int N) {
         for (int i = 1; i <= limit; ++i) {
             if (a % i == 0) {
                 ++ok;
-                ret += f(a - i, !isAlice) ? 1 : 0;
+                if (f(a - i, !isAlice)) {
+                    ++ret;
+                    if (isAlice) {
+                        return true;
+                    }
+                }
             }
-        }
-
-        if (isAlice) {
-            return ret >= 1;
         }
 
         return ok == ret;
