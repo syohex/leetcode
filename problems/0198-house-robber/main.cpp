@@ -3,30 +3,25 @@
 #include <functional>
 
 int rob(const std::vector<int> &nums) {
-    int max = 0;
-    std::function<void(size_t index, int sum, bool canRob, int skips)> f;
-    f = [&f, &max, &nums](size_t index, int sum, bool canRob, int skips) {
-        if (index >= nums.size()) {
-            if (sum > max) {
-                max = sum;
-            }
-            return;
-        }
+    if (nums.empty()) {
+        return 0;
+    }
+    if (nums.size() == 1) {
+        return nums[0];
+    }
+    if (nums.size() == 2) {
+        return nums[0] > nums[1] ? nums[0] : nums[1];
+    }
 
-        if (canRob) {
-            f(index + 1, sum + nums[index], false, 0);
-        }
-        if (skips < 1) {
-            if (canRob) {
-                f(index + 1, sum, true, skips + 1);
-            } else {
-                f(index + 1, sum, true, skips);
-            }
-        }
-    };
+    int prev = 0, cur = 0;
+    for (int num : nums) {
+        int tmp = cur;
+        int sum = prev + num;
+        cur = sum > cur ? sum : cur;
+        prev = tmp;
+    }
 
-    f(0, 0, true, 0);
-    return max;
+    return cur;
 }
 
 int main() {
