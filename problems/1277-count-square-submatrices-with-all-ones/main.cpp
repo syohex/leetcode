@@ -9,12 +9,13 @@ int countSquares(const std::vector<std::vector<int>> &matrix) {
     int ret = 0;
     for (size_t i = 1; i < limit; ++i) {
         int total = static_cast<int>(i * i);
+        int orig = ret;
         for (size_t j = 0; j <= rows - i; ++j) {
             for (size_t k = 0; k <= cols - i; ++k) {
                 int ones = 0;
                 for (size_t x = 0; x < i; ++x) {
                     for (size_t y = 0; y < i; ++y) {
-                        if (matrix[j+x][k+y] == 1) {
+                        if (matrix[j + x][k + y] == 1) {
                             ++ones;
                         }
                     }
@@ -25,7 +26,13 @@ int countSquares(const std::vector<std::vector<int>> &matrix) {
                 }
             }
         }
+
+        // If current square size is not found in matrix, there are no squares
+        if (orig == ret) {
+            return ret;
+        }
     }
+
     return ret;
 }
 
