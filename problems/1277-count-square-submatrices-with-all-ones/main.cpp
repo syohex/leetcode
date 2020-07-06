@@ -4,10 +4,10 @@
 int countSquares(const std::vector<std::vector<int>> &matrix) {
     size_t rows = matrix.size();
     size_t cols = matrix[0].size();
-    size_t limit = rows > cols ? rows : cols;
+    size_t limit = rows > cols ? cols : rows;
 
     int ret = 0;
-    for (size_t i = 1; i < limit; ++i) {
+    for (size_t i = 1; i <= limit; ++i) {
         int total = static_cast<int>(i * i);
         int orig = ret;
         for (size_t j = 0; j <= rows - i; ++j) {
@@ -52,6 +52,13 @@ int main() {
             {1, 1, 0},
         };
         assert(countSquares(input) == 7);
+    }
+    {
+        std::vector<std::vector<int>> input{
+            {1, 0, 1, 1, 0},
+            {1, 1, 1, 1, 1},
+        };
+        assert(countSquares(input) == 9);
     }
     return 0;
 }
