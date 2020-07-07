@@ -20,6 +20,7 @@ bool isIsomorphic(const std::string &s, const std::string &t) {
                 if (str[i] == str[j]) {
                     found = true;
                     v[i] = v[j];
+                    break;
                 }
             }
 
