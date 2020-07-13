@@ -22,7 +22,9 @@ int maxProfit(const std::vector<int> &prices) {
             f(sum - prices[index], false, index + 1);
             f(sum, isBuy, index + 1);
         } else {
-            f(sum + prices[index], true, index + 1);
+            if (sum + prices[index] > 0) {
+                f(sum + prices[index], true, index + 1);
+            }
             f(sum, false, index + 1);
         }
     };
