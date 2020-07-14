@@ -23,9 +23,25 @@ int twoCitySchedCost(const std::vector<std::vector<int>> &costs) {
 
         if (numA > 0) {
             f(index + 1, sum + costs[index][0], numA - 1, numB);
+        } else {
+            for (int i = 0; i < numB; ++i) {
+                sum += costs[index + i][1];
+            }
+            if (ret > sum) {
+                ret = sum;
+            }
+            return;
         }
         if (numB > 0) {
             f(index + 1, sum + costs[index][1], numA, numB - 1);
+        } else {
+            for (int i = 0; i < numA; ++i) {
+                sum += costs[index + i][0];
+            }
+            if (ret > sum) {
+                ret = sum;
+            }
+            return;
         }
     };
 
