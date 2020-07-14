@@ -9,6 +9,10 @@ int twoCitySchedCost(const std::vector<std::vector<int>> &costs) {
 
     std::function<void(size_t index, int sum, int numA, int numB)> f;
     f = [&f, &ret, &costs, &limit](size_t index, int sum, int numA, int numB) {
+        if (sum > ret) {
+            return;
+        }
+
         if (index >= limit) {
             if (ret > sum) {
                 ret = sum;
