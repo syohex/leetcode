@@ -10,18 +10,19 @@ int numPairsDivisibleBy60(const std::vector<int> &time) {
             continue;
         }
 
+        int dups = 1;
         int count = 0;
         for (size_t j = i + 1; j < time.size(); ++j) {
             if ((time[i] + time[j]) % 60 == 0) {
-                ++count;
+                count += dups;
+            }
+
+            if (time[i] == time[j]) {
+                ++dups;
             }
         }
 
-        if (count == 0) {
-            cache.insert(time[i]);
-            continue;
-        }
-
+        cache.insert(time[i]);
         ret += count;
     }
 
