@@ -34,6 +34,9 @@ bool hasGroupsSizeX(const std::vector<int> &deck) {
 
     for (; it != m.end(); ++it) {
         max_common_divisor = f(it->second, max_common_divisor);
+        if (max_common_divisor == 1) {
+            return false;
+        }
     }
 
     return max_common_divisor != 1;
