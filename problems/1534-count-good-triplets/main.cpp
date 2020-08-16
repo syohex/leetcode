@@ -6,31 +6,30 @@ int countGoodTriplets(const std::vector<int> &arr, int a, int b, int c) {
     int ret = 0;
     std::function<void(size_t n, const std::vector<int> &tmp)> f;
     f = [&f, a, b, c, &arr, &ret](size_t n, const std::vector<int> &tmp) {
-        if (tmp.size() == 3) {
-            int t = tmp[0] - tmp[1] > 0 ? tmp[0] - tmp[1] : tmp[1] - tmp[0];
-            if (t > a) {
-                return;
-            }
-            t = tmp[1] - tmp[2] > 0 ? tmp[1] - tmp[2] : tmp[2] - tmp[1];
-            if (t > b) {
-                return;
-            }
-            t = tmp[0] - tmp[2] > 0 ? tmp[0] - tmp[2] : tmp[2] - tmp[0];
-            if (t > c) {
-                return;
-            }
-
-            ++ret;
-            return;
-        }
-
         if (n >= arr.size()) {
             return;
         }
 
         std::vector<int> k = tmp;
-        k.push_back(arr[n]);
-        f(n + 1, k);
+        if (tmp.empty()) {
+            k.push_back(arr[n]);
+            f(n + 1, k);
+        } else if (tmp.size() == 1) {
+            int t = tmp[0] - arr[n] > 0 ? tmp[0] - arr[n] : arr[n] - tmp[0];
+            if (t <= a) {
+                k.push_back(arr[n]);
+                f(n + 1, k);
+            }
+        } else if (tmp.size() == 2) {
+            int t = tmp[1] - arr[n] > 0 ? tmp[1] - arr[n] : arr[n] - tmp[1];
+            if (t <= b) {
+                t = tmp[0] - arr[n] > 0 ? tmp[0] - arr[n] : arr[n] - tmp[0];
+                if (t <= c) {
+                    ++ret;
+                }
+            }
+        }
+
         f(n + 1, tmp);
     };
 
