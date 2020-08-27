@@ -20,15 +20,13 @@ int countBinarySubstrings(const std::string &s) {
         while (j < limit && s[i] != s[j]) {
             ++count2;
             if (count2 == count1) {
-                i = tmp;
-                ret += count1;
-                goto next;
+                break;
             }
             ++j;
         }
 
-        ++i;
-    next:;
+        ret += count2;
+        i = tmp;
     }
     return ret;
 }
