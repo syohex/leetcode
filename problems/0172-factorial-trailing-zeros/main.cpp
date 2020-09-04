@@ -1,19 +1,12 @@
 #include <cassert>
 #include <cstdio>
+#include <climits>
+#include <cstdint>
 
 int trailingZeroes(int n) {
     int ret = 0;
-    for (int i = 5; i <= n; i += 5) {
+    for (std::int64_t i = 5; i <= n; i += 5) {
         int j = i;
-        while (j > 0) {
-            if (j % 10 == 0) {
-                ++ret;
-                j /= 10;
-                continue;
-            }
-
-            break;
-        }
         while (j > 0) {
             if (j % 5 == 0) {
                 ++ret;
