@@ -3,7 +3,7 @@
 
 int trailingZeroes(int n) {
     int ret = 0;
-    for (int i = 2; i <= n; ++i) {
+    for (int i = 5; i <= n; i += 5) {
         int j = i;
         while (j > 0) {
             if (j % 10 == 0) {
