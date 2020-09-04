@@ -11,7 +11,7 @@ bool canMakeArithmeticProgression(std::vector<int> &arr) {
             return false;
         }
     }
-    
+
     return true;
 }
 

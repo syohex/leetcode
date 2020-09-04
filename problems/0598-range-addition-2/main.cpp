@@ -3,13 +3,13 @@
 #include <algorithm>
 #include <climits>
 
-int maxCount(int m, int n, const std::vector<std::vector<int>>& ops) {
+int maxCount(int m, int n, const std::vector<std::vector<int>> &ops) {
     if (ops.empty()) {
         return m * n;
     }
 
     int minX = INT_MAX, minY = INT_MAX;
-    for (const auto& op : ops) {
+    for (const auto &op : ops) {
         minX = std::min(minX, op[0]);
         minY = std::min(minY, op[1]);
     }
@@ -17,12 +17,11 @@ int maxCount(int m, int n, const std::vector<std::vector<int>>& ops) {
     return minX * minY;
 }
 
-
 int main() {
     {
-        std::vector<std::vector<int>> ops {
-            {2,2},
-            {3,3},
+        std::vector<std::vector<int>> ops{
+            {2, 2},
+            {3, 3},
         };
         assert(maxCount(3, 3, ops) == 4);
     }

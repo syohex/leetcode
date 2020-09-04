@@ -11,7 +11,7 @@ bool isBoomerang(std::vector<std::vector<int>> &points) {
     }
 
     points.clear();
-    for (const auto& point : s) {
+    for (const auto &point : s) {
         points.push_back(point);
     }
 

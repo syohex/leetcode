@@ -27,7 +27,7 @@ bool isPathCrossing(const std::string &path) {
             return true;
         }
 
-	s.insert(p);
+        s.insert(p);
     }
 
     return false;
