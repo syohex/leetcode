@@ -1,8 +1,13 @@
 /.idea/
 .vscode/
+
+# C++
 *.o
 *.exe
 *.out
 *.ilk
 *.pdb
 *~
+
+# Database
+*.db
