@@ -1,35 +1,28 @@
 #include <cassert>
 #include <vector>
-#include <map>
 #include <cstdio>
 
 class NumArray {
   public:
     NumArray(std::vector<int> &nums) {
+        sums_.resize(nums.size());
         int limit = static_cast<int>(nums.size());
-        if (limit == 1) {
-            m_[std::make_pair(0, 0)] = nums[0];
-            return;
-        }
-
-        std::pair<int, int> p;
+        int sum = 0;
         for (int i = 0; i < limit; ++i) {
-            int sum = 0;
-            for (int j = i; j < limit; ++j) {
-                sum += nums[j];
-                p.first = i;
-                p.second = j;
-                m_[p] = sum;
-            }
+            sum += nums[i];
+            sums_[i] = sum;
         }
     }
 
     int sumRange(int i, int j) {
-        auto key = std::make_pair(i, j);
-        return m_[key];
+        if (i == 0) {
+            return sums_[j];
+        }
+
+        return sums_[j] - sums_[i - 1];
     }
 
-    std::map<std::pair<int, int>, int> m_;
+    std::vector<int> sums_;
 };
 
 int main() {
