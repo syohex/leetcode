@@ -1,0 +1,59 @@
+#include <cassert>
+#include <vector>
+#include <map>
+#include <cstdio>
+
+class NumArray {
+  public:
+    NumArray(std::vector<int> &nums) {
+        int limit = static_cast<int>(nums.size());
+        if (limit == 1) {
+            m_[std::make_pair(0, 0)] = nums[0];
+            return;
+        }
+        for (int i = 0; i < limit; ++i) {
+            for (int j = i; j < limit; ++j) {
+                int sum = 0;
+                for (int k = i; k <= j; ++k) {
+                    sum += nums[k];
+                }
+
+                auto key = std::make_pair(i, j);
+                m_[key] = sum;
+            }
+        }
+    }
+
+    int sumRange(int i, int j) {
+        auto key = std::make_pair(i, j);
+        return m_[key];
+    }
+
+    std::map<std::pair<int, int>, int> m_;
+};
+
+int main() {
+    {
+        std::vector<int> input{-2, 0, 3, -5, 2, -1};
+        NumArray n(input);
+        assert(n.sumRange(0, 2) == 1);
+        assert(n.sumRange(2, 5) == -1);
+        assert(n.sumRange(0, 5) == -3);
+        assert(n.sumRange(0, 0) == -2);
+    }
+    {
+        std::vector<int> input{-1};
+        NumArray n(input);
+        assert(n.sumRange(0, 0) == -1);
+    }
+    {
+        std::vector<int> input{-4, -5};
+        NumArray n(input);
+        assert(n.sumRange(0, 0) == -4);
+        assert(n.sumRange(1, 1) == -5);
+        assert(n.sumRange(0, 1) == -9);
+        assert(n.sumRange(1, 1) == -5);
+        assert(n.sumRange(0, 0) == -4);
+    }
+    return 0;
+}
