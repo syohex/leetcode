@@ -11,12 +11,15 @@ class NumArray {
             m_[std::make_pair(0, 0)] = nums[0];
             return;
         }
+
+        std::pair<int, int> p;
         for (int i = 0; i < limit; ++i) {
             int sum = 0;
             for (int j = i; j < limit; ++j) {
                 sum += nums[j];
-                auto key = std::make_pair(i, j);
-                m_[key] = sum;
+                p.first = i;
+                p.second = j;
+                m_[p] = sum;
             }
         }
     }
