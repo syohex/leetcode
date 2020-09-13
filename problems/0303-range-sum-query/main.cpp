@@ -12,12 +12,9 @@ class NumArray {
             return;
         }
         for (int i = 0; i < limit; ++i) {
+            int sum = 0;
             for (int j = i; j < limit; ++j) {
-                int sum = 0;
-                for (int k = i; k <= j; ++k) {
-                    sum += nums[k];
-                }
-
+                sum += nums[j];
                 auto key = std::make_pair(i, j);
                 m_[key] = sum;
             }
