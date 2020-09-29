@@ -1,13 +1,32 @@
 #include <cassert>
 #include <vector>
 #include <map>
+#include <set>
 #include <cstdio>
 
 class FirstUnique {
   public:
-    explicit FirstUnique(const std::vector<int> &nums) : v_(nums) {
-        for (const int n : nums) {
-            ++m_[n];
+    explicit FirstUnique(const std::vector<int> &nums) {
+        std::set<int> indexs;
+        std::map<int, int> m;
+        for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            if (m.find(nums[i]) == m.end()) {
+                m[nums[i]] = i;
+                continue;
+            }
+
+            indexs.insert(m[nums[i]]);
+            indexs.insert(i);
+        }
+
+        for (int i = 0; i < static_cast<int>(nums.size()); ++i) {
+            if (indexs.find(i) == indexs.end()) {
+                v_.push_back(nums[i]);
+                ++m_[nums[i]];
+                continue;
+            }
+
+            m_[nums[i]] = 2;
         }
     }
 
@@ -21,6 +40,11 @@ class FirstUnique {
     }
 
     void add(int value) {
+        if (m_.find(value) != m_.end()) {
+            ++m_[value];
+            return;
+        }
+
         v_.push_back(value);
         ++m_[value];
     }
