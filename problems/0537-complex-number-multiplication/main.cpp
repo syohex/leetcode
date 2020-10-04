@@ -3,7 +3,7 @@
 #include <cstring>
 #include <cstdio>
 
-std::string complexNumberMultiply(const std::string& a, const std::string& b) {
+std::string complexNumberMultiply(const std::string &a, const std::string &b) {
     struct Complex {
         int real;
         int image;
