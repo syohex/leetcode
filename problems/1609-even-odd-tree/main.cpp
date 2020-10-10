@@ -34,6 +34,16 @@ bool isEvenOddTree(TreeNode *root) {
 
         if (values.size() < depth + 1) {
             values.resize(depth + 1);
+        } else {
+            if (depth % 2 == 0) {
+                if (values[depth].back() >= node->val) {
+                    return false;
+                }
+            } else {
+                if (values[depth].back() <= node->val) {
+                    return false;
+                }
+            }
         }
         values[depth].push_back(node->val);
 
@@ -51,39 +61,7 @@ bool isEvenOddTree(TreeNode *root) {
         return true;
     };
 
-    if (!f(root, 0)) {
-        return false;
-    }
-
-    printf("[\n");
-    for (const auto &v : values) {
-        printf("  [");
-        for (const auto i : v) {
-            printf(" %d ", i);
-        }
-        printf("]\n");
-    }
-    printf("]\n");
-
-    for (size_t i = 1; i < values.size(); ++i) {
-        for (size_t j = 0; j < values[i].size(); ++j) {
-            if (i % 2 == 0) {
-                for (size_t k = 1; k <= values[i].size() - 1; ++k) {
-                    if (values[i][k - 1] >= values[i][k]) {
-                        return false;
-                    }
-                }
-            } else {
-                for (size_t k = 1; k <= values[i].size() - 1; ++k) {
-                    if (values[i][k - 1] <= values[i][k]) {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
+    return f(root, 0);
 }
 
 int main() {
