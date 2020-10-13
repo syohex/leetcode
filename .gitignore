@@ -8,6 +8,7 @@
 *.ilk
 *.pdb
 *~
+*.swp
 
 # Database
 *.db
