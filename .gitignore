@@ -9,6 +9,8 @@
 *.pdb
 *~
 *.swp
+*.exp
+*.lib
 
 # Database
 *.db
