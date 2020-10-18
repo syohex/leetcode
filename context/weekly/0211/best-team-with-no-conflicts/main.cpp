@@ -4,6 +4,25 @@
 #include <vector>
 #include <cstdio>
 
+int validate(const std::vector<size_t> &acc, const std::vector<int> &scores, const std::vector<int> &ages) {
+    for (size_t i = 0; i < acc.size(); ++i) {
+        int score_i = scores[acc[i]];
+        int age_i = ages[acc[i]];
+        for (size_t j = 0; j < acc.size(); ++j) {
+            if (i == j) {
+                continue;
+            }
+            int score_j = scores[acc[j]];
+            int age_j = ages[acc[j]];
+            if (score_i < score_j && age_i > age_j) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
 int bestTeamScore(const std::vector<int> &scores, const std::vector<int> &ages) {
     int max = 0;
     std::function<void(size_t idx, const std::vector<size_t> &acc)> f;
@@ -22,20 +41,7 @@ int bestTeamScore(const std::vector<int> &scores, const std::vector<int> &ages) 
 
             int sum = 0;
             for (size_t i = 0; i < acc.size(); ++i) {
-                int score_i = scores[acc[i]];
-                int age_i = ages[acc[i]];
-                for (size_t j = 0; j < acc.size(); ++j) {
-                    if (i == j) {
-                        continue;
-                    }
-                    int score_j = scores[acc[j]];
-                    int age_j = ages[acc[j]];
-                    if (score_i < score_j && age_i > age_j) {
-                        return;
-                    }
-                }
-
-                sum += score_i;
+                sum += scores[acc[i]];
             }
 
             if (sum > max) {
@@ -46,7 +52,10 @@ int bestTeamScore(const std::vector<int> &scores, const std::vector<int> &ages) 
 
         auto tmp = acc;
         tmp.push_back(idx);
-        f(idx + 1, tmp);
+        if (validate(tmp, scores, ages)) {
+            f(idx + 1, tmp);
+        }
+
         f(idx + 1, acc);
     };
 
