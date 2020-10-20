@@ -16,15 +16,15 @@ ListNode *reverseList(ListNode *head) {
         return nullptr;
     }
 
-    ListNode *p = head;
+    ListNode *current_head = head;
     while (head->next != nullptr) {
        auto *tmp = head->next;
        head->next = tmp->next; 
-       tmp->next = p;
-       p = tmp;
+       tmp->next = current_head;
+       current_head = tmp;
     }
 
-    return p;
+    return current_head;
 }
 
 int main() {
