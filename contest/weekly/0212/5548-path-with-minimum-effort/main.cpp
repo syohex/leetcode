@@ -2,14 +2,22 @@
 #include <vector>
 #include <cstdio>
 #include <set>
+#include <map>
 #include <functional>
 #include <algorithm>
 #include <climits>
 
 int minimumEffortPath(const std::vector<std::vector<int>> &heights) {
+    std::map<size_t, int> m;
+    for (size_t i = 0; i < heights.size(); ++i) {
+        for (size_t j = 0; j < heights[0].size(); ++j) {
+            size_t index = i * heights.size() + j;
+            m[index] = INT_MAX;
+        }
+    }
     int ret = INT_MAX;
     std::function<void(size_t row, size_t col, int max, const std::set<size_t> &s)> f;
-    f = [&f, &heights, &ret](size_t row, size_t col, int max, const std::set<size_t> &s) {
+    f = [&f, &heights, &ret, &m](size_t row, size_t col, int max, const std::set<size_t> &s) {
         if (max >= ret) {
             return;
         }
@@ -19,6 +27,13 @@ int minimumEffortPath(const std::vector<std::vector<int>> &heights) {
                 ret = max;
             }
         }
+
+        size_t index = row * heights.size() + col;
+        if (m.find(index) != m.end() && max >= m[index]) {
+            return;
+        }
+
+        m[index] = max;
 
         size_t down = row + 1;
         size_t down_index = down * heights.size() + col;
