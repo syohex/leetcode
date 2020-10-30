@@ -37,38 +37,58 @@ ListNode *oddEvenList(ListNode *head) {
     return head;
 }
 
-int main() {
-    {
-        ListNode *r = new ListNode(1);
-        r->next = new ListNode(2);
-        r->next->next = new ListNode(3);
-        r->next->next->next = new ListNode(4);
-        r->next->next->next->next = new ListNode(5);
-        auto ret = oddEvenList(r);
-        assert(ret->val == 1);
-        assert(ret->next->val == 3);
-        assert(ret->next->next->val == 5);
-        assert(ret->next->next->next->val == 2);
-        assert(ret->next->next->next->next->val == 4);
-        assert(ret->next->next->next->next->next == nullptr);
+ListNode *oddEvenList2(ListNode *head) {
+    if (head == nullptr) {
+        return head;
     }
-    {
-        ListNode *r = new ListNode(2);
-        r->next = new ListNode(1);
-        r->next->next = new ListNode(3);
-        r->next->next->next = new ListNode(5);
-        r->next->next->next->next = new ListNode(6);
-        r->next->next->next->next->next = new ListNode(4);
-        r->next->next->next->next->next->next = new ListNode(7);
-        auto ret = oddEvenList(r);
-        assert(ret->val == 2);
-        assert(ret->next->val == 3);
-        assert(ret->next->next->val == 6);
-        assert(ret->next->next->next->val == 7);
-        assert(ret->next->next->next->next->val == 1);
-        assert(ret->next->next->next->next->next->val == 5);
-        assert(ret->next->next->next->next->next->next->val == 4);
-        assert(ret->next->next->next->next->next->next->next == nullptr);
+
+    ListNode *odd = head;
+    ListNode *even = head->next;
+    ListNode *even_head = even;
+    while (even != nullptr && even->next != nullptr) {
+        odd->next = even->next;
+        odd = odd->next;
+        even->next = odd->next;
+        even = even->next;
+    }
+    odd->next = even_head;
+    return head;
+}
+
+int main() {
+    for (auto *f : {oddEvenList, oddEvenList2}) {
+        {
+            ListNode *r = new ListNode(1);
+            r->next = new ListNode(2);
+            r->next->next = new ListNode(3);
+            r->next->next->next = new ListNode(4);
+            r->next->next->next->next = new ListNode(5);
+            auto ret = f(r);
+            assert(ret->val == 1);
+            assert(ret->next->val == 3);
+            assert(ret->next->next->val == 5);
+            assert(ret->next->next->next->val == 2);
+            assert(ret->next->next->next->next->val == 4);
+            assert(ret->next->next->next->next->next == nullptr);
+        }
+        {
+            ListNode *r = new ListNode(2);
+            r->next = new ListNode(1);
+            r->next->next = new ListNode(3);
+            r->next->next->next = new ListNode(5);
+            r->next->next->next->next = new ListNode(6);
+            r->next->next->next->next->next = new ListNode(4);
+            r->next->next->next->next->next->next = new ListNode(7);
+            auto ret = f(r);
+            assert(ret->val == 2);
+            assert(ret->next->val == 3);
+            assert(ret->next->next->val == 6);
+            assert(ret->next->next->next->val == 7);
+            assert(ret->next->next->next->next->val == 1);
+            assert(ret->next->next->next->next->next->val == 5);
+            assert(ret->next->next->next->next->next->next->val == 4);
+            assert(ret->next->next->next->next->next->next->next == nullptr);
+        }
     }
     return 0;
 }
