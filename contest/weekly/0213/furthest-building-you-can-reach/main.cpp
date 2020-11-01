@@ -8,29 +8,43 @@ int furthestBuilding(const std::vector<int> &heights, int bricks, int ladders) {
         return 1;
     }
 
-    int max = 0;
+    struct Diff {
+        int diff = 0;
+        size_t pos = 0;
+    };
+
+    std::vector<Diff> v;
+    for (size_t i = 0; i < heights.size() - 1; ++i) {
+        int diff = heights[i + 1] - heights[i];
+        if (diff > 0) {
+            v.emplace_back(Diff{diff, i});
+        }
+    }
+
+    int limit = static_cast<int>(heights.size() - 1);
+
+    if (v.empty()) {
+        return limit;
+    }
+
+    int max = v[0].pos;
     std::function<void(size_t pos, int bricks, int ladders)> f;
-    f = [&f, &heights, &max](size_t pos, int bricks, int ladders) {
-        if (pos == heights.size() - 1) {
-            max = heights.size() - 1;
+    f = [&f, &v, &limit, &max](size_t pos, int bricks, int ladders) {
+        if (pos == v.size()) {
+            max = limit;
             return;
         }
 
-        int diff = heights[pos + 1] - heights[pos];
-        if (diff <= 0) {
-            f(pos + 1, bricks, ladders);
+        if (ladders == 0 && bricks < v[pos].diff) {
+            if (max < static_cast<int>(pos)) {
+                max = v[pos].pos;
+            }
         } else {
-            if (ladders == 0 && bricks < diff) {
-                if (max < static_cast<int>(pos)) {
-                    max = pos;
-                }
-            } else {
-                if (bricks >= diff) {
-                    f(pos + 1, bricks - diff, ladders);
-                }
-                if (ladders > 0) {
-                    f(pos + 1, bricks, ladders - 1);
-                }
+            if (bricks >= v[pos].diff) {
+                f(pos + 1, bricks - v[pos].diff, ladders);
+            }
+            if (ladders > 0) {
+                f(pos + 1, bricks, ladders - 1);
             }
         }
     };
@@ -51,6 +65,10 @@ int main() {
     {
         std::vector<int> heights{14, 3, 19, 3};
         assert(furthestBuilding(heights, 17, 0) == 3);
+    }
+    {
+        std::vector<int> heights{7, 5, 13};
+        assert(furthestBuilding(heights, 0, 0) == 1);
     }
     return 0;
 }
