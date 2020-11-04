@@ -1,51 +1,51 @@
 #include <cassert>
 #include <vector>
-#include <functional>
 #include <algorithm>
 #include <set>
+#include <cstdio>
 
-std::vector<std::vector<int>> threeSum(const std::vector<int> &nums) {
-    std::set<int> table;
-    for (const auto n : nums) {
-        table.insert(n);
+std::vector<std::vector<int>> threeSum(std::vector<int> &nums) {
+    std::vector<std::vector<int>> ret;
+    if (nums.size() < 3) {
+        return ret;
     }
 
-    std::function<void(const std::vector<int> &, size_t, std::vector<int> &, size_t)> f;
+    std::sort(nums.begin(), nums.end());
 
-    std::set<std::vector<int>> s;
-    f = [&f, &s, &table](const std::vector<int> &v, size_t index, std::vector<int> &acc, size_t remain) {
-        if (index + remain >= v.size()) {
-            return;
+    int limit = static_cast<int>(nums.size());
+    for (int i = 0; i < limit; ++i) {
+        if (nums[i] > 0) {
+            continue;
         }
 
-        {
-            acc[remain] = v[index];
-            if (remain == 0) {
-                if (acc[0] + acc[1] + acc[2] == 0) {
-                    auto tmp = acc;
-                    std::sort(tmp.begin(), tmp.end());
-                    s.insert(tmp);
-                }
-            } else if (remain == 1) {
-                int last = 0 - (acc[1] + acc[2]);
-                if (table.find(last) != table.end()) {
-                    f(v, index + 1, acc, remain - 1);
-                }
+        if (i != 0 && nums[i - 1] == nums[i]) {
+            continue;
+        }
+
+        int low = i + 1;
+        int high = limit - 1;
+
+        while (low < high) {
+            int sum = nums[i] + nums[low] + nums[high];
+            if (sum < 0) {
+                ++low;
+            } else if (sum > 0) {
+                --high;
             } else {
-                f(v, index + 1, acc, remain - 1);
+                ret.emplace_back(std::vector<int>{nums[i], nums[low], nums[high]});
+                ++low;
+                --high;
+
+                while (low < high && nums[low - 1] == nums[low]) {
+                    ++low;
+                }
+                while (low < high && nums[high] == nums[high + 1]) {
+                    --high;
+                }
             }
         }
-
-        f(v, index + 1, acc, remain);
-    };
-
-    std::vector<int> acc(3, 0);
-    f(nums, 0, acc, 2);
-
-    std::vector<std::vector<int>> ret;
-    for (const auto &v : s) {
-        ret.push_back(v);
     }
+
     return ret;
 }
 
