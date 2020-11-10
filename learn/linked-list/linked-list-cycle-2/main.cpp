@@ -13,7 +13,7 @@ ListNode *detectCycle(ListNode *head) {
         return nullptr;
     }
 
-    std::set<ListNode*> s;
+    std::set<ListNode *> s;
     ListNode *p = head;
     while (p != nullptr) {
         s.insert(p);
