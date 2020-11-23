@@ -69,7 +69,7 @@ bool search(const std::vector<int> &nums, int target) {
     return binary_search(nums, 0, index, target);
 }
 
-int search2(const std::vector<int>& nums, int target) {
+int search2(const std::vector<int> &nums, int target) {
     for (const auto n : nums) {
         if (n == target) {
             return true;

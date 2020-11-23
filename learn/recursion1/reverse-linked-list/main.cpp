@@ -3,7 +3,8 @@
 struct ListNode {
     int val;
     ListNode *next;
-    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {
+    }
 };
 
 ListNode *reverseList(ListNode *head) {
@@ -29,7 +30,6 @@ ListNode *reverseList2(ListNode *head) {
     head->next = nullptr;
     return r;
 }
-
 
 int main() {
     {
