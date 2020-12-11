@@ -10,14 +10,12 @@ int subarraySum(const std::vector<int> &nums, int k) {
     }
 
     std::map<int, int> m;
+    m[0] = 1;
     int ret = 0;
     for (size_t i = 0; i < nums.size(); ++i) {
         int diff = sums[i] - k;
         if (m.find(diff) != m.end()) {
             ret += m[diff];
-        }
-        if (diff == 0) {
-            ++ret;
         }
 
         ++m[sums[i]];
