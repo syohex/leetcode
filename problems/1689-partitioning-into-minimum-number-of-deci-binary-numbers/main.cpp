@@ -6,6 +6,9 @@ int minPartitions(const std::string &n) {
     int ret = 0;
     for (const char c : n) {
         ret = std::max(ret, c - '0');
+        if (ret == 9) {
+            return ret;
+        }
     }
     return ret;
 }
