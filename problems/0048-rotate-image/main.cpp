@@ -1,12 +1,20 @@
 #include <cassert>
 #include <vector>
+#include <algorithm>
+#include <utility>
+#include <cstdio>
 
 void rotate(std::vector<std::vector<int>> &matrix) {
-    auto tmp = matrix;
     for (size_t i = 0; i < matrix.size(); ++i) {
-        for (size_t j = 0; j < matrix[i].size(); ++j) {
-            matrix[i][j] = tmp[matrix.size() - 1 - j][i];
+        for (size_t j = 0; j <= i; ++j) {
+            if (i != j) {
+                std::swap(matrix[i][j], matrix[j][i]);
+            }
         }
+    }
+
+    for (size_t i = 0; i < matrix.size(); ++i) {
+        std::reverse(matrix[i].begin(), matrix[i].end());
     }
 }
 
