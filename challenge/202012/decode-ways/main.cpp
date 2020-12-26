@@ -1,38 +1,45 @@
 #include <cassert>
 #include <string>
 #include <functional>
+#include <map>
 
 int numDecodings(const std::string &s) {
-    int ret = 0;
-    std::function<void(size_t pos)> f;
-    f = [&f, &ret, &s](size_t pos) {
+    std::map<size_t, int> cache;
+    std::function<int(size_t pos)> f;
+
+    f = [&f, &s, &cache](size_t pos) {
         if (pos == s.size()) {
-            ++ret;
-            return;
+            return 1;
+        }
+
+        if (s[pos] == '0') {
+            return 0;
+        }
+
+        if (cache.find(pos) != cache.end()) {
+            return cache[pos];
         }
 
         char c = s[pos];
+        int ret = f(pos + 1);
         if (c == '1') {
-            f(pos + 1);
             if (pos + 1 < s.size()) {
-                f(pos + 2);
+                ret += f(pos + 2);
             }
         } else if (c == '2') {
-            f(pos + 1);
-
             if (pos + 1 < s.size()) {
                 char c2 = s[pos + 1];
                 if (c2 >= '0' && c2 <= '6') {
-                    f(pos + 2);
+                    ret += f(pos + 2);
                 }
             }
-        } else if (c >= '3' && c <= '9') {
-            f(pos + 1);
         }
+
+        cache[pos] = ret;
+        return ret;
     };
 
-    f(0);
-    return ret;
+    return f(0);
 }
 
 int main() {
