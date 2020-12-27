@@ -2,7 +2,7 @@
 #include <functional>
 #include <vector>
 #include <algorithm>
-#include <cmath>
+#include <climits>
 
 struct TreeNode {
     int val;
@@ -21,16 +21,21 @@ int widthOfBinaryTree(TreeNode *root) {
         return 0;
     }
 
-    std::vector<std::vector<TreeNode*>> vs;
-    std::function<void(TreeNode * node, size_t depth, size_t pos)> f;
-    f = [&f, &vs](TreeNode *node, size_t depth, size_t pos) {
+    std::vector<std::vector<std::int64_t>> vs;
+    std::function<void(TreeNode * node, size_t depth, std::int64_t pos)> f;
+    f = [&f, &vs](TreeNode *node, size_t depth, std::int64_t pos) {
         if (depth + 1 > vs.size()) {
             vs.resize(depth + 1);
-            size_t size = std::pow(2, depth);
-            vs[depth] = std::vector<TreeNode*>(size, nullptr);
+            vs[depth] = std::vector<std::int64_t>{INT64_MAX, INT64_MIN};
         }
 
-        vs[depth][pos] = node;
+        if (pos < vs[depth][0]) {
+            vs[depth][0] = pos;
+        }
+        if (pos > vs[depth][1]) {
+            vs[depth][1] = pos;
+        }
+
         if (node->left == nullptr && node->right == nullptr) {
             return;
         }
@@ -46,24 +51,13 @@ int widthOfBinaryTree(TreeNode *root) {
 
     f(root, 0, 0);
 
-    int ret = 0;
+    std::int64_t ret = 0;
     for (const auto &v : vs) {
-        int limit = v.size();
-        int start = 0;
-        while (start < limit && v[start] == nullptr) {
-            ++start;
-        }
-
-        int end = limit - 1;
-        while (end >= 0 && v[end] == nullptr) {
-            --end;
-        }
-
-        int width = end - start + 1;
+        auto width = v[1] - v[0] + 1;
         ret = std::max(ret, width);
     }
 
-    return ret;
+    return static_cast<int>(ret);
 }
 
 int main() {
