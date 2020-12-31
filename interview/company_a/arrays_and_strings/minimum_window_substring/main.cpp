@@ -39,14 +39,22 @@ std::string minWindow(const std::string &s, const std::string &t) {
             ++end;
         }
 
-        while (start < limit && check(m, mt)) {
-            --m[s[start]];
-            ++start;
+        if (!check(m, mt)) {
+            break;
         }
 
-        std::string str = s.substr(start - 1, end - start + 1);
-        if (str.size() < ret.size()) {
-            ret = str;
+        while (start < limit) {
+            char c = s[start];
+            ++start;
+            --m[c];
+            if (m[c] < mt[c]) {
+                break;
+            }
+        }
+
+        size_t len = end - start + 1;
+        if (len < ret.size()) {
+            ret = s.substr(start - 1, len);
         }
     }
 
@@ -57,5 +65,6 @@ int main() {
     assert(minWindow("ADOBECODEBANC", "ABC") == "BANC");
     assert(minWindow("A", "A") == "A");
     assert(minWindow("A", "AA") == "");
+    assert(minWindow("acbdbaab", "aabd") == "dbaa");
     return 0;
 }
