@@ -21,7 +21,7 @@ bool canJump(const std::vector<int> &nums) {
     return ok[0];
 }
 
-bool canJump2(const std::vector<int>& nums) {
+bool canJump2(const std::vector<int> &nums) {
     int last = nums.size() - 1;
     for (int i = last - 1; i >= 0; --i) {
         if (i + nums[i] >= last) {
