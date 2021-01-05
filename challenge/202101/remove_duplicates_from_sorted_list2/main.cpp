@@ -21,7 +21,10 @@ ListNode *deleteDuplicates(ListNode *head) {
                     break;
                 }
 
-                p = p->next;
+                ListNode *tmp = p->next;
+                p->next = nullptr;
+                delete p;
+                p = tmp;
             }
 
             if (prev == nullptr) {
