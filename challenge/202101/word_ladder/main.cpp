@@ -34,38 +34,37 @@ int ladderLength(const std::string &beginWord, const std::string &endWord, const
         }
     }
 
+    std::map<std::string, int> distance{
+        {beginWord, 0},
+    };
     for (size_t i = 0; i < wordList.size(); ++i) {
         if (can_move(beginWord, wordList[i])) {
             table[beginWord].push_back(wordList[i]);
         }
+        distance[wordList[i]] = INT_MAX;
     }
 
-    std::function<int(int count, const std::vector<std::string> &ws, std::set<std::string> &checked)> f;
-    f = [&f, &table, &endWord](int count, const std::vector<std::string> &ws, std::set<std::string> &checked) -> int {
+    std::function<int(int count, const std::vector<std::string> &ws)> f;
+    f = [&f, &table, &endWord, &distance](int count, const std::vector<std::string> &ws) -> int {
         int ret = INT_MAX;
         for (size_t i = 0; i < ws.size(); ++i) {
-            if (checked.find(ws[i]) != checked.end()) {
+            if (distance[ws[i]] <= count) {
                 continue;
             }
 
+            distance[ws[i]] = count;
+
             if (ws[i] == endWord) {
-                ret = std::min(ret, count);
-            } else {
-                checked.insert(ws[i]);
-                ret = std::min(ret, f(count + 1, table[ws[i]], checked));
-                checked.erase(ws[i]);
+                return count;
             }
 
-            if (ret == count) {
-                return ret;
-            }
+            ret = std::min(ret, f(count + 1, table[ws[i]]));
         }
 
         return ret;
     };
 
-    std::set<std::string> checked{beginWord};
-    int ret = f(2, table[beginWord], checked);
+    int ret = f(2, table[beginWord]);
     return ret == INT_MAX ? 0 : ret;
 }
 
