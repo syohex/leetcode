@@ -1,15 +1,20 @@
 #include <cassert>
 #include <vector>
+#include <map>
 #include <algorithm>
 #include <climits>
 
 int minOperations(const std::vector<int> &nums, int x) {
     std::vector<int> acc_left(nums.size() + 1, 0);
-    std::vector<int> acc_right(nums.size() + 1, 0);
+    std::map<int, int> m{
+        {0, 0},
+    };
 
+    int sum = 0;
     for (size_t i = 0, j = nums.size() - 1; i < nums.size(); ++i, --j) {
         acc_left[i + 1] = acc_left[i] + nums[i];
-        acc_right[i + 1] = acc_right[i] + nums[j];
+        sum += nums[j];
+        m[sum] = i + 1;
     }
 
     size_t ret = SIZE_MAX;
@@ -18,16 +23,18 @@ int minOperations(const std::vector<int> &nums, int x) {
             break;
         }
 
-        for (size_t j = 0; j < acc_right.size() - i; ++j) {
-            int sum = acc_left[i] + acc_right[j];
-            if (sum > x) {
-                break;
-            }
-
-            if (sum == x) {
-                ret = std::min(ret, i + j);
-            }
+        int diff = x - acc_left[i];
+        auto it = m.find(diff);
+        if (it == m.end()) {
+            continue;
         }
+
+        size_t tmp = i + it->second;
+        if (tmp > nums.size()) {
+            continue;
+        }
+
+        ret = std::min(ret, tmp);
     }
 
     return ret == SIZE_MAX ? -1 : static_cast<int>(ret);
