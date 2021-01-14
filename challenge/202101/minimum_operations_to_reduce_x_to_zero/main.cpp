@@ -5,39 +5,49 @@
 #include <climits>
 
 int minOperations(const std::vector<int> &nums, int x) {
-    std::vector<int> acc_left(nums.size() + 1, 0);
+    int limit = nums.size();
+    std::vector<int> acc;
     std::map<int, int> m{
         {0, 0},
     };
 
-    int sum = 0;
-    for (size_t i = 0, j = nums.size() - 1; i < nums.size(); ++i, --j) {
-        acc_left[i + 1] = acc_left[i] + nums[i];
-        sum += nums[j];
-        m[sum] = i + 1;
-    }
-
-    size_t ret = SIZE_MAX;
-    for (size_t i = 0; i < acc_left.size(); ++i) {
-        if (acc_left[i] > x) {
+    acc.push_back(0);
+    for (int num : nums) {
+        int val = acc.back() + num;
+        if (val > x) {
             break;
         }
 
-        int diff = x - acc_left[i];
+        acc.push_back(val);
+    }
+
+    int sum = 0;
+    for (int i = 0, j = limit - 1; i < limit; ++i, --j) {
+        sum += nums[j];
+        if (sum > x) {
+            break;
+        }
+
+        m[sum] = i + 1;
+    }
+
+    int ret = INT_MAX;
+    for (int i = 0; i < static_cast<int>(acc.size()); ++i) {
+        int diff = x - acc[i];
         auto it = m.find(diff);
         if (it == m.end()) {
             continue;
         }
 
-        size_t tmp = i + it->second;
-        if (tmp > nums.size()) {
+        int tmp = i + it->second;
+        if (tmp > limit) {
             continue;
         }
 
         ret = std::min(ret, tmp);
     }
 
-    return ret == SIZE_MAX ? -1 : static_cast<int>(ret);
+    return ret == INT_MAX ? -1 : static_cast<int>(ret);
 }
 
 int main() {
