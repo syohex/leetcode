@@ -6,28 +6,32 @@
 std::string longestPalindrome(const std::string &s) {
     size_t size = s.size();
     std::vector<std::vector<bool>> dp(size);
+
     for (size_t i = 0; i < s.size(); ++i) {
         dp[i] = std::vector<bool>(size, false);
+        dp[i][i] = true;
     }
 
-    std::string ret;
-    for (size_t i = 0; i < size; ++i) {
-        for (size_t j = 0, k = i; k < size; ++j, ++k) {
-            if (i == 0) {
-                dp[j][k] = true;
-            } else if (i == 1) {
-                dp[j][k] = s[j] == s[k];
-            } else {
-                dp[j][k] = s[j] == s[k] && dp[j + 1][k - 1];
-            }
+    size_t left = size - 1, right = size - 1;
+    for (size_t i = 0; i < size - 1; ++i) {
+        if (s[i] == s[i + 1]) {
+            dp[i][i + 1] = true;
+            left = i;
+            right = i + 1;
+        }
+    }
 
+    for (size_t i = 2; i < size; ++i) {
+        for (size_t j = 0, k = i; k < size; ++j, ++k) {
+            dp[j][k] = s[j] == s[k] && dp[j + 1][k - 1];
             if (dp[j][k]) {
-                ret = s.substr(j, k - j + 1);
+                left = j;
+                right = k;
             }
         }
     }
 
-    return ret;
+    return s.substr(left, right - left + 1);
 }
 
 int main() {
