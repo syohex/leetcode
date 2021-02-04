@@ -1,28 +1,18 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <map>
 
-int findLHS(std::vector<int> &nums) {
-    std::sort(nums.begin(), nums.end());
+int findLHS(const std::vector<int> &nums) {
+    std::map<int, int> m;
+    for (int n : nums) {
+        ++m[n];
+    }
 
     int ret = 0;
-    int len = nums.size();
-    for (int i = 0; i < len - 1; ++i) {
-        int count = 1;
-        bool has_one_plus = false;
-        for (int j = i + 1; j < len; ++j) {
-            if (nums[i] == nums[j]) {
-                ++count;
-            } else if (nums[i] + 1 == nums[j]) {
-                ++count;
-                has_one_plus = true;
-            } else {
-                break;
-            }
-        }
-
-        if (has_one_plus) {
-            ret = std::max(ret, count);
+    for (const auto &it : m) {
+        if (m.find(it.first + 1) != m.end()) {
+            ret = std::max(ret, it.second + m[it.first + 1]);
         }
     }
 
