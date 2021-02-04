@@ -1,27 +1,28 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <climits>
 
-int findLHS(const std::vector<int> &nums) {
+int findLHS(std::vector<int> &nums) {
+    std::sort(nums.begin(), nums.end());
+
     int ret = 0;
     int len = nums.size();
     for (int i = 0; i < len - 1; ++i) {
-        int sames = 1;
-        int incs = 0;
-        int decs = 0;
+        int count = 1;
+        bool has_one_plus = false;
         for (int j = i + 1; j < len; ++j) {
             if (nums[i] == nums[j]) {
-                ++sames;
+                ++count;
             } else if (nums[i] + 1 == nums[j]) {
-                ++incs;
-            } else if (nums[i] - 1 == nums[j]) {
-                ++decs;
+                ++count;
+                has_one_plus = true;
+            } else {
+                break;
             }
         }
 
-        if (!(incs == 0 && decs == 0)) {
-            ret = std::max(ret, sames + std::max(incs, decs));
+        if (has_one_plus) {
+            ret = std::max(ret, count);
         }
     }
 
@@ -29,12 +30,26 @@ int findLHS(const std::vector<int> &nums) {
 }
 
 int main() {
-    assert((findLHS(std::vector<int>{1, 3, 2, 2, 5, 2, 3, 7}) == 5));
-    assert((findLHS(std::vector<int>{1, 2, 3, 4}) == 2));
-    assert((findLHS(std::vector<int>{1, 1, 1, 1}) == 0));
-    assert((findLHS(std::vector<int>{1, 2, 2, 1}) == 4));
-    assert((findLHS(std::vector<int>{-3, -1, -1, -1, -3, -2}) == 4));
-
+    {
+        std::vector<int> input{1, 3, 2, 2, 5, 2, 3, 7};
+        assert(findLHS(input) == 5);
+    }
+    {
+        std::vector<int> input{1, 2, 3, 4};
+        assert(findLHS(input) == 2);
+    }
+    {
+        std::vector<int> input{1, 1, 1, 1};
+        assert(findLHS(input) == 0);
+    }
+    {
+        std::vector<int> input{1, 2, 2, 1};
+        assert(findLHS(input) == 4);
+    }
+    {
+        std::vector<int> input{-3, -1, -1, -1, -3, -2};
+        assert(findLHS(input) == 4);
+    }
     {
         std::vector<int> input{2, 2, 2, 2, 2, 2, 2, 3, 1, 0, 0, 0, 3, 1, -1, 0, 1, 1, 0, 0, 1, 1, 2, 2, 2, 0, 1, 2, 2, 3, 2};
         assert(findLHS(input) == 20);
