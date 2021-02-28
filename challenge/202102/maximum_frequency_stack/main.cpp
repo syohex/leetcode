@@ -2,48 +2,41 @@
 #include <vector>
 #include <map>
 #include <queue>
-#include <list>
 
 class FreqStack {
   public:
-    FreqStack() {
+    FreqStack() : id_(0) {
     }
+
+    struct Data {
+        int count;
+        int id;
+        int num;
+
+        bool operator<(const Data &other) const {
+            if (count != other.count) {
+                return count < other.count;
+            }
+
+            return id < other.id;
+        }
+    };
 
     void push(int x) {
         ++count_[x];
-        queue_.push_front(x);
+        queue_.push(Data{count_[x], id_++, x});
     }
 
     int pop() {
-        int max = 0;
-        for (const auto &it : count_) {
-            if (it.second > max) {
-                max = it.second;
-            }
-        }
-
-        std::vector<int> candidates;
-        for (const auto &it : count_) {
-            if (it.second == max) {
-                candidates.push_back(it.first);
-            }
-        }
-
-        for (auto it = queue_.begin(); it != queue_.end(); ++it) {
-            for (auto n : candidates) {
-                if (*it == n) {
-                    queue_.erase(it);
-                    --count_[n];
-                    return n;
-                }
-            }
-        }
-
-        return -1;
+        int ret = queue_.top().num;
+        queue_.pop();
+        --count_[ret];
+        return ret;
     }
 
     std::map<int, int> count_;
-    std::deque<int> queue_;
+    std::priority_queue<Data, std::vector<Data>> queue_;
+    int id_;
 };
 
 int main() {
