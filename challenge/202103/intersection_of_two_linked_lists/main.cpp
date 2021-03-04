@@ -1,5 +1,5 @@
 #include <cassert>
-#include <set>
+#include <cstdio>
 
 struct ListNode {
     int val;
@@ -9,22 +9,14 @@ struct ListNode {
 };
 
 ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-    std::set<ListNode *> s;
     ListNode *p = headA;
-    while (p != nullptr) {
-        s.insert(p);
-        p = p->next;
+    ListNode *q = headB;
+    while (p != q) {
+        p = p != nullptr ? p->next : headB;
+        q = q != nullptr ? q->next : headA;
     }
 
-    p = headB;
-    while (p != nullptr) {
-        if (s.find(p) != s.end()) {
-            return p;
-        }
-        p = p->next;
-    }
-
-    return nullptr;
+    return p;
 }
 
 int main() {
