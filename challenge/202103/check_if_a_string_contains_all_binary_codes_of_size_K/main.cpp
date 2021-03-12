@@ -1,27 +1,27 @@
 #include <cassert>
 #include <string>
-#include <cmath>
+#include <set>
 
 bool hasAllCodes(const std::string &s, int k) {
-    const auto f = [](std::string &str, int n, int k) {
-        unsigned int mask = 1;
-        for (int i = 0; i < k; ++i) {
-            size_t index = str.size() - 1 - i;
-            str[index] = ((n & mask) != 0) ? '1' : '0';
-            mask <<= 1;
-        }
-    };
+    if (s.size() < static_cast<size_t>(k)) {
+        return 0;
+    }
 
-    std::string digits(k, 0);
-    int limit = std::pow(2, k);
-    for (int i = 0; i < limit; ++i) {
-        f(digits, i, k);
-        if (s.find(digits) == std::string::npos) {
-            return false;
+    std::set<std::string> substrs;
+    size_t goal = 1 << k;
+
+    size_t limit = s.size() - k + 1;
+    for (size_t i = 0; i < limit; ++i) {
+        const auto substr = s.substr(i, k);
+        if (substrs.find(substr) == substrs.end()) {
+            substrs.insert(substr);
+            if (substrs.size() >= goal) {
+                return true;
+            }
         }
     }
 
-    return true;
+    return false;
 }
 
 int main() {
