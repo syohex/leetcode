@@ -1,54 +1,68 @@
 #include <cassert>
 #include <vector>
+#include <set>
+#include <map>
 #include <string>
 #include <cctype>
 
 std::vector<std::string> spellchecker(const std::vector<std::string> &wordlist, const std::vector<std::string> &queries) {
     const auto isVowel = [](char c) -> bool { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; };
 
-    std::vector<std::string> lowerWordList, lowerQueries;
-    std::string tmp;
-    for (const auto &word : wordlist) {
-        for (const char c : word) {
-            tmp.push_back(std::tolower(static_cast<int>(c)));
+    std::set<std::string> wordSet;
+    std::map<std::string, size_t> lowerWordMap;
+    std::vector<std::string> lowerWords;
+    for (size_t i = 0; i < wordlist.size(); ++i) {
+        wordSet.insert(wordlist[i]);
+
+        std::string lower;
+        for (const char c : wordlist[i]) {
+            lower.push_back(std::tolower(static_cast<int>(c)));
         }
-        lowerWordList.push_back(tmp);
-        tmp.clear();
+
+        lowerWords.push_back(lower);
+        if (lowerWordMap.find(lower) == lowerWordMap.end()) {
+            lowerWordMap[lower] = i;
+        }
     }
 
-    for (const auto &query : queries) {
-        for (const char c : query) {
-            tmp.push_back(std::tolower(static_cast<int>(c)));
+    std::vector<std::string> lowerQueries;
+    for (size_t i = 0; i < queries.size(); ++i) {
+        std::string lower;
+        for (const char c : queries[i]) {
+            lower.push_back(std::tolower(static_cast<int>(c)));
         }
-        lowerQueries.push_back(tmp);
-        tmp.clear();
+
+        lowerQueries.push_back(lower);
     }
 
     std::vector<std::string> ret;
     for (size_t i = 0; i < queries.size(); ++i) {
-        for (const auto &word : wordlist) {
-            if (queries[i] == word) {
-                ret.push_back(word);
-                goto next;
+        if (wordSet.find(queries[i]) != wordSet.end()) {
+            ret.push_back(queries[i]);
+            continue;
+        }
+
+        auto it = lowerWordMap.find(lowerQueries[i]);
+        if (it != lowerWordMap.end()) {
+            ret.push_back(wordlist[it->second]);
+            continue;
+        }
+
+        for (const auto &it2 : lowerWordMap) {
+            if (lowerQueries[i].size() != it2.first.size()) {
+                continue;
             }
         }
 
-        for (size_t j = 0; j < lowerWordList.size(); ++j) {
-            if (lowerQueries[i] == lowerWordList[j]) {
-                ret.push_back(wordlist[j]);
-                goto next;
-            }
-        }
-
-        for (size_t j = 0; j < lowerWordList.size(); ++j) {
-            if (lowerQueries[i].size() != lowerWordList[j].size()) {
+        for (size_t j = 0; j < lowerWords.size(); ++j) {
+            if (lowerQueries[i].size() != lowerWords[j].size()) {
                 continue;
             }
 
             bool ok = true;
             for (size_t k = 0; k < lowerQueries[i].size(); ++k) {
                 char c1 = lowerQueries[i][k];
-                char c2 = lowerWordList[j][k];
+                char c2 = lowerWords[j][k];
                 if (isVowel(c1) && isVowel(c2)) {
                     continue;
                 }
@@ -66,6 +80,7 @@ std::vector<std::string> spellchecker(const std::vector<std::string> &wordlist, 
         }
 
         ret.push_back("");
+
     next:;
     }
 
