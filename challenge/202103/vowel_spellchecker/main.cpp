@@ -9,30 +9,38 @@ std::vector<std::string> spellchecker(const std::vector<std::string> &wordlist, 
     const auto isVowel = [](char c) -> bool { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; };
 
     std::set<std::string> wordSet;
-    std::map<std::string, size_t> lowerWordMap;
+    std::map<std::string, size_t> lowerWordMap, nonVowelWordMap;
     std::vector<std::string> lowerWords;
     for (size_t i = 0; i < wordlist.size(); ++i) {
         wordSet.insert(wordlist[i]);
 
-        std::string lower;
+        std::string lower, nonVowel;
         for (const char c : wordlist[i]) {
-            lower.push_back(std::tolower(static_cast<int>(c)));
+            char lc = std::tolower(c);
+            lower.push_back(lc);
+            nonVowel.push_back(isVowel(lc) ? '9' : lc);
         }
 
         lowerWords.push_back(lower);
         if (lowerWordMap.find(lower) == lowerWordMap.end()) {
             lowerWordMap[lower] = i;
         }
+        if (nonVowelWordMap.find(nonVowel) == nonVowelWordMap.end()) {
+            nonVowelWordMap[nonVowel] = i;
+        }
     }
 
-    std::vector<std::string> lowerQueries;
+    std::vector<std::string> lowerQueries, nonVowelQueries;
     for (size_t i = 0; i < queries.size(); ++i) {
-        std::string lower;
+        std::string lower, nonVowel;
         for (const char c : queries[i]) {
-            lower.push_back(std::tolower(static_cast<int>(c)));
+            char lc = std::tolower(c);
+            lower.push_back(lc);
+            nonVowel.push_back(isVowel(lc) ? '9' : lc);
         }
 
         lowerQueries.push_back(lower);
+        nonVowelQueries.push_back(nonVowel);
     }
 
     std::vector<std::string> ret;
@@ -54,34 +62,13 @@ std::vector<std::string> spellchecker(const std::vector<std::string> &wordlist, 
             }
         }
 
-        for (size_t j = 0; j < lowerWords.size(); ++j) {
-            if (lowerQueries[i].size() != lowerWords[j].size()) {
-                continue;
-            }
-
-            bool ok = true;
-            for (size_t k = 0; k < lowerQueries[i].size(); ++k) {
-                char c1 = lowerQueries[i][k];
-                char c2 = lowerWords[j][k];
-                if (isVowel(c1) && isVowel(c2)) {
-                    continue;
-                }
-
-                if (c1 != c2) {
-                    ok = false;
-                    break;
-                }
-            }
-
-            if (ok) {
-                ret.push_back(wordlist[j]);
-                goto next;
-            }
+        auto it2 = nonVowelWordMap.find(nonVowelQueries[i]);
+        if (it2 != nonVowelWordMap.end()) {
+            ret.push_back(wordlist[it2->second]);
+            continue;
         }
 
         ret.push_back("");
-
-    next:;
     }
 
     return ret;
