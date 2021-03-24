@@ -1,41 +1,27 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <list>
 
 std::vector<int> advantageCount(std::vector<int> &A, const std::vector<int> &B) {
     std::sort(A.begin(), A.end());
 
+    std::list<int> lst(A.begin(), A.end());
     std::vector<int> ret;
-    std::vector<bool> checked(A.size(), false);
     for (int b : B) {
         bool found = false;
-        for (size_t i = 0; i < A.size(); ++i) {
-            if (checked[i]) {
-                continue;
-            }
-
-            if (A[i] > b) {
-                ret.push_back(A[i]);
-                checked[i] = true;
+        for (auto it = lst.begin(); it != lst.end(); ++it) {
+            if (*it > b) {
+                ret.push_back(*it);
+                lst.erase(it);
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            for (size_t i = 0; i < A.size(); ++i) {
-                if (!checked[i]) {
-                    ret.push_back(A[i]);
-                    checked[i] = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    for (size_t i = 0; i < checked.size(); ++i) {
-        if (!checked[i]) {
-            ret.push_back(A[i]);
+            ret.push_back(lst.front());
+            lst.pop_front();
         }
     }
 
