@@ -1,6 +1,9 @@
 #include <cassert>
 #include <vector>
 #include <functional>
+#include <queue>
+#include <map>
+#include <set>
 
 std::vector<std::vector<int>> pacificAtlantic(const std::vector<std::vector<int>> &matrix) {
     int rows = matrix.size();
@@ -12,113 +15,71 @@ std::vector<std::vector<int>> pacificAtlantic(const std::vector<std::vector<int>
         return std::vector<std::vector<int>>{};
     }
 
-    std::vector<std::vector<bool>> pacificable(rows, std::vector<bool>(cols, false));
-    std::function<bool(std::vector<std::vector<bool>> & checked, int row, int col)> pf;
-    pf = [&pf, &matrix, &pacificable, &rows, &cols](std::vector<std::vector<bool>> &checked, int row, int col) -> bool {
-        checked[row][col] = true;
-        if (pacificable[row][col] || row == 0 || col == 0) {
-            return true;
-        }
+    std::function<void(std::queue<std::pair<int, int>> & q, std::vector<std::vector<bool>> & visited)> f;
+    f = [&matrix, &rows, &cols](std::queue<std::pair<int, int>> &q, std::vector<std::vector<bool>> &visited) {
+        const int step_x[] = {0, 1, 0, -1};
+        const int step_y[] = {-1, 0, 1, 0};
+        while (!q.empty()) {
+            int row = q.front().first;
+            int col = q.front().second;
+            q.pop();
+            visited[row][col] = true;
 
-        bool ret = false;
-        // up
-        if (!ret && row >= 1 && !checked[row - 1][col]) {
-            if (matrix[row][col] >= matrix[row - 1][col]) {
-                ret = pf(checked, row - 1, col);
-            }
-        }
-        // left
-        if (!ret && col >= 1 && !checked[row][col - 1]) {
-            if (matrix[row][col] >= matrix[row][col - 1]) {
-                ret = pf(checked, row, col - 1);
-            }
-        }
-        // down
-        if (!ret && row + 1 < rows && !checked[row + 1][col]) {
-            if (matrix[row][col] >= matrix[row + 1][col]) {
-                ret = pf(checked, row + 1, col);
-            }
-        }
-        // right
-        if (!ret && col + 1 < cols && !checked[row][col + 1]) {
-            if (matrix[row][col] >= matrix[row][col + 1]) {
-                ret = pf(checked, row, col + 1);
-            }
-        }
+            for (int i = 0; i < 4; ++i) {
+                int next_row = row + step_x[i];
+                int next_col = col + step_y[i];
 
-        return ret;
+                if (next_row >= 0 && next_row < rows && next_col >= 0 && next_col < cols) {
+                    if (matrix[row][col] <= matrix[next_row][next_col] && !visited[next_row][next_col]) {
+                        q.push({next_row, next_col});
+                    }
+                }
+            }
+        }
     };
 
-    std::vector<std::vector<bool>> atlanticable(rows, std::vector<bool>(cols, false));
-    std::function<bool(std::vector<std::vector<bool>> & checked, int row, int col)> af;
-    af = [&af, &matrix, &atlanticable, &rows, &cols](std::vector<std::vector<bool>> &checked, int row, int col) -> bool {
-        checked[row][col] = true;
-        if (atlanticable[row][col] || row == rows - 1 || col == cols - 1) {
-            return true;
-        }
+    std::vector<std::vector<bool>> visited_pacific(rows, std::vector<bool>(cols, false));
+    std::vector<std::vector<bool>> visited_atlantic(rows, std::vector<bool>(cols, false));
 
-        bool ret = false;
-        // up
-        if (!ret && row >= 1 && !checked[row - 1][col]) {
-            if (matrix[row][col] >= matrix[row - 1][col]) {
-                ret = af(checked, row - 1, col);
-            }
-        }
-        // left
-        if (!ret && col >= 1 && !checked[row][col - 1]) {
-            if (matrix[row][col] >= matrix[row][col - 1]) {
-                ret = af(checked, row, col - 1);
-            }
-        }
-        // down
-        if (!ret && row + 1 < rows && !checked[row + 1][col]) {
-            if (matrix[row][col] >= matrix[row + 1][col]) {
-                ret = af(checked, row + 1, col);
-            }
-        }
-        // right
-        if (!ret && col + 1 < cols && !checked[row][col + 1]) {
-            if (matrix[row][col] >= matrix[row][col + 1]) {
-                ret = af(checked, row, col + 1);
-            }
-        }
-
-        return ret;
-    };
+    std::queue<std::pair<int, int>> pacific;
+    std::queue<std::pair<int, int>> atlantic;
 
     for (int i = 0; i < rows; ++i) {
-        pacificable[i][0] = true;
-        atlanticable[i][cols - 1] = true;
+        pacific.push({i, 0});
+        atlantic.push({i, cols - 1});
     }
     for (int i = 0; i < cols; ++i) {
-        pacificable[0][i] = true;
-        atlanticable[rows - 1][i] = true;
+        pacific.push({0, i});
+        atlantic.push({rows - 1, i});
     }
 
-    std::vector<std::vector<bool>> checked(rows, std::vector<bool>(cols, false));
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (!pacificable[i][j]) {
-                checked = std::vector<std::vector<bool>>(rows, std::vector<bool>(cols, false));
-                pacificable[i][j] = pf(checked, i, j);
-            }
-            if (!atlanticable[i][j]) {
-                checked = std::vector<std::vector<bool>>(rows, std::vector<bool>(cols, false));
-                atlanticable[i][j] = af(checked, i, j);
-            }
-        }
-    }
+    f(pacific, visited_pacific);
+    f(atlantic, visited_atlantic);
 
     std::vector<std::vector<int>> ret;
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
-            if (pacificable[i][j] && atlanticable[i][j]) {
-                ret.push_back(std::vector<int>{i, j});
+            if (visited_pacific[i][j] && visited_atlantic[i][j]) {
+                ret.push_back({i, j});
             }
         }
     }
 
     return ret;
+}
+
+bool check(const std::vector<std::vector<int>> &a, const std::vector<std::vector<int>> &b) {
+    if (a.size() != b.size()) {
+        return false;
+    }
+
+    std::set<std::vector<int>> sa, sb;
+    for (size_t i = 0; i < a.size(); ++i) {
+        sa.insert(a[i]);
+        sb.insert(b[i]);
+    }
+
+    return sa == sb;
 }
 
 int main() {
@@ -130,7 +91,7 @@ int main() {
             {0, 4}, {1, 3}, {1, 4}, {2, 2}, {3, 0}, {3, 1}, {4, 0},
         };
         auto ret = pacificAtlantic(matrix);
-        assert(ret == expected);
+        assert(check(ret, expected));
     }
     {
         std::vector<std::vector<int>> matrix{
@@ -142,7 +103,7 @@ int main() {
             {0, 2}, {1, 0}, {1, 1}, {1, 2}, {2, 0}, {2, 1}, {2, 2},
         };
         auto ret = pacificAtlantic(matrix);
-        assert(ret == expected);
+        assert(check(ret, expected));
     }
     return 0;
 }
