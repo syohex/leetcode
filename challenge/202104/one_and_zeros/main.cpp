@@ -3,7 +3,6 @@
 #include <string>
 #include <algorithm>
 #include <functional>
-#include <map>
 
 int findMaxForm(const std::vector<std::string> &strs, int m, int n) {
     std::vector<std::vector<int>> v(strs.size(), std::vector<int>(2, 0));
@@ -13,39 +12,16 @@ int findMaxForm(const std::vector<std::string> &strs, int m, int n) {
         }
     }
 
-    std::map<std::vector<int>, int> cache;
-
-    std::function<int(int pos, int count, int zeros, int ones)> f;
-    f = [&f, &v, &strs, &m, &n, &cache](int pos, int count, int zeros, int ones) -> int {
-        if (pos == strs.size()) {
-            return count;
-        }
-
-        int ret1 = 0, ret2 = 0;
-        if (v[pos][0] + zeros <= m && v[pos][1] + ones <= n) {
-            std::vector<int> key{pos + 1, count + 1, zeros + v[pos][0], ones + v[pos][1]};
-            if (cache.find(key) == cache.end()) {
-                ret1 = f(pos + 1, count + 1, zeros + v[pos][0], ones + v[pos][1]);
-                cache[key] = ret1;
-            } else {
-                ret1 = cache[key];
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1, 0));
+    for (const auto &d : v) {
+        for (int i = m; i >= d[0]; --i) {
+            for (int j = n; j >= d[1]; --j) {
+                dp[i][j] = std::max(dp[i][j], dp[i - d[0]][j - d[1]] + 1);
             }
         }
+    }
 
-        if (zeros <= m && ones <= n) {
-            std::vector<int> key{pos + 1, count, zeros, ones};
-            if (cache.find(key) == cache.end()) {
-                ret2 = f(pos + 1, count, zeros, ones);
-            } else {
-                ret2 = cache[key];
-                cache[key] = ret2;
-            }
-        }
-
-        return std::max(ret1, ret2);
-    };
-
-    return f(0, 0, 0, 0);
+    return dp[m][n];
 }
 
 int main() {
