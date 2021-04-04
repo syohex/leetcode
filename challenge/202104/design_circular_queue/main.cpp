@@ -3,7 +3,7 @@
 
 class MyCircularQueue {
   public:
-    MyCircularQueue(int k) : size_(k), front_(0), rear_(k-1), queue_(size_), count_(0) {
+    MyCircularQueue(int k) : size_(k), front_(0), rear_(k - 1), queue_(size_), count_(0) {
     }
 
     bool enQueue(int value) {
