@@ -1,26 +1,20 @@
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
 bool isIdealPermutation(const std::vector<int> &A) {
-    int global = 0;
-    int local = 0;
-
+    int max = A[0];
     int len = A.size();
-    for (int i = 0; i < len - 1; ++i) {
-        for (int j = i + 1; j < len; ++j) {
-            if (A[i] > A[j]) {
-                ++global;
-            }
+
+    for (int i = 2; i < len; ++i) {
+        if (max > A[i]) {
+            return false;
         }
+
+        max = std::max(max, A[i - 1]);
     }
 
-    for (int i = 0; i < len - 1; ++i) {
-        if (A[i] > A[i + 1]) {
-            ++local;
-        }
-    }
-
-    return global == local;
+    return true;
 }
 
 int main() {
