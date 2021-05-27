@@ -1,23 +1,26 @@
 #include <cassert>
 #include <vector>
+#include <map>
 
 class FindSumPairs {
   public:
     FindSumPairs(std::vector<int> &nums1, std::vector<int> &nums2) : v1_(nums1), v2_(nums2) {
+        for (int n : nums2) {
+            ++m_[n];
+        }
     }
 
     void add(int index, int val) {
+        --m_[v2_[index]];
         v2_[index] += val;
+        ++m_[v2_[index]];
     }
 
     int count(int tot) {
         int ret = 0;
         for (int n1 : v1_) {
-            for (int n2 : v2_) {
-                if (n1 + n2 == tot) {
-                    ++ret;
-                }
-            }
+            int target = tot - n1;
+            ret += m_[target];
         }
 
         return ret;
@@ -25,6 +28,7 @@ class FindSumPairs {
 
     std::vector<int> v1_;
     std::vector<int> v2_;
+    std::map<int, int> m_;
 };
 
 int main() {
