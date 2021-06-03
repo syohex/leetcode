@@ -13,16 +13,19 @@ int maxArea(int h, int w, std::vector<int> &horizontalCuts, std::vector<int> &ve
     std::sort(verticalCuts.begin(), verticalCuts.end());
 
     long MOD = std::pow(10, 9) + 7;
-    long ret = 0;
+    long max_height = 0;
     for (size_t i = 1; i < horizontalCuts.size(); ++i) {
         long height = horizontalCuts[i] - horizontalCuts[i - 1];
-        for (size_t j = 1; j < verticalCuts.size(); ++j) {
-            long width = verticalCuts[j] - verticalCuts[j - 1];
-            ret = std::max(ret, (width * height) % MOD);
-        }
+        max_height = std::max(max_height, height);
     }
 
-    return ret;
+    long max_width = 0;
+    for (size_t i = 1; i < verticalCuts.size(); ++i) {
+        long width = verticalCuts[i] - verticalCuts[i - 1];
+        max_width = std::max(max_width, width);
+    }
+
+    return (max_width * max_height) % MOD;
 }
 
 int main() {
