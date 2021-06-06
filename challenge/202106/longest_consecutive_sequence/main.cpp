@@ -3,28 +3,26 @@
 #include <set>
 #include <algorithm>
 
-int longestConsecutive(const std::vector<int> &nums) {
-    std::set<int> s(nums.begin(), nums.end());
-    std::set<int> checked;
-
-    int ret = 0;
-    for (int n : nums) {
-        if (checked.find(n) != checked.end()) {
-            continue;
-        }
-
-        checked.insert(n);
-
-        int tmp = 1;
-        while (s.find(n + 1) != s.end()) {
-            checked.insert(n + 1);
-            ++tmp;
-            ++n;
-        }
-
-        ret = std::max(ret, tmp);
+int longestConsecutive(std::vector<int> &nums) {
+    if (nums.empty()) {
+        return 0;
     }
 
+    std::sort(nums.begin(), nums.end());
+
+    int ret = 1;
+    int tmp = 1;
+    for (size_t i = 1; i < nums.size(); ++i) {
+        if (nums[i] == nums[i - 1] + 1) {
+            ++tmp;
+        } else if (nums[i] == nums[i - 1]) {
+        } else {
+            ret = std::max(ret, tmp);
+            tmp = 1;
+        }
+    }
+
+    ret = std::max(ret, tmp);
     return ret;
 }
 
@@ -40,6 +38,14 @@ int main() {
     {
         std::vector<int> nums;
         assert(longestConsecutive(nums) == 0);
+    }
+    {
+        std::vector<int> nums{9};
+        assert(longestConsecutive(nums) == 1);
+    }
+    {
+        std::vector<int> nums{1, 2, 0, 1};
+        assert(longestConsecutive(nums) == 3);
     }
     return 0;
 }
