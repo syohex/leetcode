@@ -2,17 +2,23 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
+#include <queue>
 
 int maxResult(const std::vector<int> &nums, int k) {
     int len = nums.size();
     std::vector<int> dp(len, INT_MIN);
     dp[0] = nums[0];
 
-    for (int i = 0; i < len; ++i) {
-        int end = std::min(len - 1, i + k);
-        for (int j = i + 1; j <= end; ++j) {
-            dp[j] = std::max(dp[j], dp[i] + nums[j]);
+    std::priority_queue<std::pair<int, int>> q;
+    q.push(std::make_pair(nums[0], 0));
+
+    for (int i = 1; i < len; ++i) {
+        while (q.top().second < i - k) {
+            q.pop();
         }
+
+        dp[i] = nums[i] + dp[q.top().second];
+        q.push(std::make_pair(dp[i], i));
     }
 
     return dp[len - 1];
