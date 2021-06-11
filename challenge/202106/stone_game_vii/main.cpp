@@ -12,37 +12,29 @@ int stoneGameVII(const std::vector<int> &stones) {
         acc[i + 1] = acc[i] + stones[i];
     }
 
-    std::map<std::tuple<int, int, bool>, int> cache;
-    std::function<int(int start, int end, bool is_alice)> f;
-    f = [&f, &acc, &cache](int start, int end, bool is_alice) -> int {
+    std::vector<std::vector<int>> cache(len, std::vector<int>(len, -1));
+    std::function<int(int start, int end)> f;
+    f = [&f, &acc, &cache](int start, int end) -> int {
         if (start == end) {
             return 0;
         }
 
-        std::tuple<int, int, bool> key(start, end, is_alice);
-        if (cache.find(key) != cache.end()) {
-            return cache[key];
+        if (cache[start][end] != -1) {
+            return cache[start][end];
         }
 
         int remove_first = acc[end + 1] - acc[start + 1];
         int remove_last = acc[end] - acc[start];
 
-        int ret;
-        if (is_alice) {
-            int v1 = f(start + 1, end, false) + remove_first;
-            int v2 = f(start, end - 1, false) + remove_last;
-            ret = std::max(v1, v2);
-        } else {
-            int v1 = f(start + 1, end, true) - remove_first;
-            int v2 = f(start, end - 1, true) - remove_last;
-            ret = std::min(v1, v2);
-        }
+        int v1 = remove_first - f(start + 1, end);
+        int v2 = remove_last - f(start, end - 1);
+        int ret = std::max(v1, v2);
 
-        cache[key] = ret;
+        cache[start][end] = ret;
         return ret;
     };
 
-    return std::abs(f(0, len - 1, true));
+    return std::abs(f(0, len - 1));
 }
 
 int main() {
