@@ -1,40 +1,27 @@
 #include <cassert>
 #include <vector>
-#include <functional>
 #include <algorithm>
-#include <climits>
 
-int minRefuelStops(int target, int startFuel, std::vector<std::vector<int>> &stations) {
-    stations.push_back({target, 0});
+int minRefuelStops(int target, int startFuel, const std::vector<std::vector<int>> &stations) {
+    int len = stations.size();
+    std::vector<long> dp(len + 1, 0);
+    dp[0] = startFuel;
 
-    int ret = INT_MAX;
-    std::function<void(size_t pos, int fuel, int count)> f;
-    f = [&f, &stations, &ret](size_t pos, int fuel, int count) {
-        if (count >= ret) {
-            return;
-        }
-        if (pos == 0) {
-            fuel -= stations[pos][0];
-        } else {
-            fuel -= stations[pos][0] - stations[pos - 1][0];
-        }
-        if (fuel < 0) {
-            return;
-        }
-
-        if (pos == stations.size() - 1) {
-            if (fuel >= 0) {
-                ret = std::min(ret, count);
+    for (int i = 0; i < len; ++i) {
+        for (int j = i; j >= 0; --j) {
+            if (dp[j] >= stations[i][0]) {
+                dp[j + 1] = std::max(dp[j + 1], dp[j] + stations[i][1]);
             }
-            return;
         }
+    }
 
-        f(pos + 1, fuel, count);
-        f(pos + 1, fuel + stations[pos][1], count + 1);
-    };
+    for (int i = 0; i < len + 1; ++i) {
+        if (dp[i] >= target) {
+            return i;
+        }
+    }
 
-    f(0, startFuel, 0);
-    return ret == INT_MAX ? -1 : ret;
+    return -1;
 }
 
 int main() {
