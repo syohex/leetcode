@@ -1,11 +1,16 @@
 #include <cassert>
 #include <vector>
 #include <functional>
+#include <algorithm>
 
-bool makesquare(const std::vector<int> &matchsticks) {
+bool makesquare(std::vector<int> &matchsticks) {
     int sum = 0;
     for (int n : matchsticks) {
         sum += n;
+    }
+
+    if (sum % 4 != 0) {
+        return false;
     }
 
     int edge = sum / 4;
@@ -30,6 +35,7 @@ bool makesquare(const std::vector<int> &matchsticks) {
         return false;
     };
 
+    std::sort(matchsticks.begin(), matchsticks.end(), std::greater<int>());
     return f(0);
 }
 
