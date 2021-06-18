@@ -3,29 +3,67 @@
 
 class NumArray {
   public:
-    NumArray(std::vector<int> &nums) : nums_(nums) {
-        acc_.resize(nums_.size() + 1);
-        acc_[0] = 0;
+    NumArray(std::vector<int> &nums) {
+        size_ = nums.size();
+        tree_.resize(size_ * 2);
 
-        for (size_t i = 1; i <= nums_.size(); ++i) {
-            acc_[i] = acc_[i - 1] + nums[i - 1];
+        build_segment_tree(nums);
+    }
+
+    void build_segment_tree(const std::vector<int> &nums) {
+        for (int i = size_, j = 0; i < 2 * size_; ++i, ++j) {
+            tree_[i] = nums[j];
+        }
+
+        for (int i = size_ - 1; i > 0; --i) {
+            tree_[i] = tree_[i * 2] + tree_[i * 2 + 1];
         }
     }
 
     void update(int index, int val) {
-        int diff = val - nums_[index];
-        for (size_t i = index + 1; i < acc_.size(); ++i) {
-            acc_[i] += diff;
+        int tree_index = index + size_;
+        tree_[tree_index] = val;
+
+        while (tree_index > 0) {
+            int left = tree_index;
+            int right = tree_index;
+
+            if (tree_index % 2 == 0) {
+                right = tree_index + 1;
+            } else {
+                left = tree_index - 1;
+            }
+
+            int parent_index = tree_index / 2;
+            tree_[parent_index] = tree_[left] + tree_[right];
+            tree_index = parent_index;
         }
-        nums_[index] = val;
     }
 
     int sumRange(int left, int right) {
-        return acc_[right + 1] - acc_[left];
+        int left_index = left + size_;
+        int right_index = right + size_;
+
+        int ret = 0;
+        while (left_index <= right_index) {
+            if (left_index % 2 == 1) {
+                ret += tree_[left_index];
+                ++left_index;
+            }
+            if (right_index % 2 == 0) {
+                ret += tree_[right_index];
+                --right_index;
+            }
+
+            left_index /= 2;
+            right_index /= 2;
+        }
+
+        return ret;
     }
 
-    std::vector<int> nums_;
-    std::vector<int> acc_;
+    std::vector<int> tree_;
+    int size_;
 };
 
 int main() {
