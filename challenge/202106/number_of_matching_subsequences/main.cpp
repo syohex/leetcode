@@ -1,47 +1,28 @@
 #include <cassert>
 #include <vector>
 #include <string>
-#include <map>
-#include <utility>
+#include <algorithm>
 
 int numMatchingSubseq(const std::string &s, const std::vector<std::string> &words) {
     int len = s.size();
-    std::map<char, int> table;
+    std::vector<std::vector<int>> table(26);
     for (int i = 0; i < len; ++i) {
-        if (table.find(s[i]) == table.end()) {
-            table[s[i]] = i;
-        }
-    }
-
-    std::vector<std::map<char, int>> v;
-    for (int i = 0; i < len - 1; ++i) {
-        std::map<char, int> m;
-        for (int j = i + 1; j < len; ++j) {
-            if (m.find(s[j]) == m.end()) {
-                m[s[j]] = j;
-            }
-        }
-        v.push_back(m);
+        table[s[i] - 'a'].push_back(i);
     }
 
     int ret = 0;
     for (const auto &word : words) {
-        auto it = table.find(word[0]);
-        if (it == table.end()) {
-            continue;
-        }
-
+        int index = -1;
         bool ok = true;
-        int index = it->second;
-        for (size_t i = 1; i < word.size(); ++i) {
-            auto &d = v[index];
-            auto it2 = d.find(word[i]);
-            if (it2 == d.end()) {
+        for (char c : word) {
+            auto &indexes = table[c - 'a'];
+            auto it = std::lower_bound(indexes.begin(), indexes.end(), index);
+            if (it == indexes.end()) {
                 ok = false;
                 break;
             }
 
-            index = it2->second;
+            index = *it + 1;
         }
 
         if (ok) {
