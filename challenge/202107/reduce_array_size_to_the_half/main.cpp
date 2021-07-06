@@ -1,35 +1,25 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 int minSetSize(const std::vector<int> &arr) {
-    struct Data {
-        int num;
-        int count;
-    };
-
-    std::vector<Data> v;
+    std::map<int, int> m;
     for (int num : arr) {
-        bool found = false;
-        for (Data &d : v) {
-            if (d.num == num) {
-                found = true;
-                ++d.count;
-                break;
-            }
-        }
-
-        if (!found) {
-            v.push_back(Data{num, 1});
-        }
+        ++m[num];
     }
 
-    std::sort(v.begin(), v.end(), [](const Data &a, const Data &b) { return a.count > b.count; });
+    std::vector<int> v;
+    for (const auto &it : m) {
+        v.push_back(it.second);
+    }
+
+    std::sort(v.begin(), v.end(), std::greater<int>());
 
     int half = arr.size() / 2;
     int sum = 0;
     for (size_t i = 0; i < v.size(); ++i) {
-        sum += v[i].count;
+        sum += v[i];
         if (sum >= half) {
             return i + 1;
         }
