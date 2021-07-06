@@ -24,39 +24,18 @@ int minSetSize(const std::vector<int> &arr) {
         }
     }
 
-    if (v.size() == 1) {
-        return 1;
-    }
-
     std::sort(v.begin(), v.end(), [](const Data &a, const Data &b) { return a.count > b.count; });
 
-    int len = v.size();
-    int ret = arr.size();
-    int half = ret / 2;
-
-    for (int i = 0; i < len - 1; ++i) {
-        int sum = v[i].count;
+    int half = arr.size() / 2;
+    int sum = 0;
+    for (size_t i = 0; i < v.size(); ++i) {
+        sum += v[i].count;
         if (sum >= half) {
-            return 1;
-        }
-
-        int count = 1;
-        bool ok = false;
-        for (int j = i + 1; j < len; ++j) {
-            sum += v[j].count;
-            ++count;
-            if (sum >= half) {
-                ok = true;
-                break;
-            }
-        }
-
-        if (ok) {
-            ret = std::min(ret, count);
+            return i + 1;
         }
     }
 
-    return ret;
+    return v.size();
 }
 
 int main() {
