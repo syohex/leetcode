@@ -9,15 +9,21 @@ int triangleNumber(std::vector<int> &nums) {
     int ret = 0;
     for (int i = 0; i < len - 2; ++i) {
         for (int j = i + 1; j < len - 1; ++j) {
-            int k = j + 1;
-            while (k < len && nums[i] + nums[j] > nums[k]) {
-                ++k;
+            int left = j + 1;
+            int right = len - 1;
+            while (left <= right) {
+                int mid = (left + right) / 2;
+                if (nums[i] + nums[j] <= nums[mid]) {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
             }
 
-            ret += k - j - 1;
+            ret += left - j - 1;
         }
     }
-
+    
     return ret;
 }
 
