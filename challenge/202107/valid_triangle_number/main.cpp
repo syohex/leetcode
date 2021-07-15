@@ -1,16 +1,20 @@
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
-int triangleNumber(const std::vector<int> &nums) {
+int triangleNumber(std::vector<int> &nums) {
+    std::sort(nums.begin(), nums.end());
+
     int len = nums.size();
     int ret = 0;
     for (int i = 0; i < len - 2; ++i) {
         for (int j = i + 1; j < len - 1; ++j) {
-            for (int k = j + 1; k < len; ++k) {
-                if (nums[i] + nums[j] > nums[k] && nums[j] + nums[k] > nums[i] && nums[i] + nums[k] > nums[j]) {
-                    ++ret;
-                }
+            int k = j + 1;
+            while (k < len && nums[i] + nums[j] > nums[k]) {
+                ++k;
             }
+
+            ret += k - j - 1;
         }
     }
 
