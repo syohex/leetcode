@@ -10,19 +10,27 @@ int largestIsland(std::vector<std::vector<int>> &grid) {
     std::vector<std::pair<int, int>> steps{{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
     const auto f = [&grid, &rows, &cols, &steps](int row, int col) -> int {
-        std::stack<std::pair<int, int>> stack;
-        stack.push({row, col});
+        int index = row * rows + col;
+        std::stack<int> stack;
+        stack.push(index);
 
-        std::set<std::pair<int, int>> checked;
-        checked.insert({row, col});
+        std::set<int> checked;
+        checked.insert(index);
 
         while (!stack.empty()) {
-            auto pair = stack.top();
+            auto i = stack.top();
             stack.pop();
 
+            int base_x = i / rows;
+            int base_y = i % rows;
             for (const auto &step : steps) {
-                int x = pair.first + step.first;
-                int y = pair.second + step.second;
+                int x = base_x + step.first;
+                int y = base_y + step.second;
+
+                int new_index = x * rows + y;
+                if (checked.find(new_index) != checked.end()) {
+                    continue;
+                }
 
                 if (!(x >= 0 && x < rows && y >= 0 && y < cols)) {
                     continue;
@@ -32,10 +40,8 @@ int largestIsland(std::vector<std::vector<int>> &grid) {
                     continue;
                 }
 
-                if (checked.find({x, y}) == checked.end()) {
-                    stack.push({x, y});
-                    checked.insert({x, y});
-                }
+                stack.push(new_index);
+                checked.insert(new_index);
             }
         }
 
