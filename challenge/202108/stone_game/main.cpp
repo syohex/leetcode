@@ -2,46 +2,39 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include <set>
+#include <map>
 #include <tuple>
 
 bool stoneGame(const std::vector<int> &piles) {
-    using key_type = std::tuple<int, int, int, int, bool>;
-
-    std::set<key_type> checked;
-    std::function<bool(int left, int right, int alex, int lee, bool turn)> f;
-    f = [&f, &piles, &checked](int left, int right, int alex, int lee, bool turn) -> bool {
-        if (left == right) {
-            return alex > lee;
-        }
-
-        auto key = key_type{left, right, alex, lee, turn};
-        if (checked.find(key) != checked.end()) {
-            return false;
-        }
-
-        if (turn) {
-            if (f(left + 1, right, alex + piles[left], lee, !turn)) {
-                return true;
-            }
-            if (f(left, right - 1, alex + piles[right], lee, !turn)) {
-                return true;
-            }
-        } else {
-            if (f(left + 1, right, alex, lee + piles[left], !turn)) {
-                return true;
-            }
-            if (f(left, right - 1, alex, lee + piles[right], !turn)) {
-                return true;
-            }
-        }
-
-        checked.insert(key);
-        return false;
-    };
+    using key_type = std::tuple<int, int>;
 
     int len = piles.size();
-    return f(0, len - 1, 0, 0, true);
+    std::map<key_type, int> cache;
+    std::function<int(int left, int right)> f;
+    f = [&f, &piles, &cache, &len](int left, int right) -> int {
+        if (left >= len || right < 0) {
+            return 0;
+        }
+
+        key_type key{left, right};
+        if (cache.find(key) != cache.end()) {
+            return cache.at(key);
+        }
+
+        int left_score = piles[left] + std::min(f(left + 2, right), f(left + 1, right - 1));
+        int right_score = piles[right] + std::min(f(left, right - 2), f(left + 1, right - 1));
+
+        cache[key] = std::max(left_score, right_score);
+        return cache[key];
+    };
+
+    int alex = f(0, len - 1);
+    int sum = 0;
+    for (int pile : piles) {
+        sum += pile;
+    }
+
+    return alex > sum - alex;
 }
 
 int main() {
