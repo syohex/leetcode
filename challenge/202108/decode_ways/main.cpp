@@ -1,42 +1,41 @@
 #include <cassert>
 #include <functional>
 #include <string>
+#include <map>
 
 int numDecodings(const std::string &s) {
-    int ret = 0;
     int len = s.size();
-    std::function<void(int pos)> f;
-    f = [&f, &s, &ret, &len](int pos) {
+    std::map<int, int> cache;
+    std::function<int(int pos)> f;
+    f = [&f, &s, &len, &cache](int pos) -> int {
         if (pos == len) {
-            ++ret;
-            return;
+            return 1;
         }
 
-        if (pos == len - 1) {
-            if (s[pos] == '0') {
-                return;
-            }
+        if (cache.find(pos) != cache.end()) {
+            return cache.at(pos);
+        }
 
-            f(pos + 1);
+        int ret;
+        if (s[pos] == '0') {
+            ret = 0;
         } else {
-            if (s[pos] == '0') {
-                // do thing
-            } else if (s[pos] == '1') {
-                f(pos + 1);
-                f(pos + 2);
-            } else if (s[pos] == '2') {
-                f(pos + 1);
-                if (s[pos + 1] >= '0' && s[pos + 1] <= '6') {
-                    f(pos + 2);
+            ret = f(pos + 1);
+
+            if (pos < len - 1) {
+                if (s[pos] == '1') {
+                    ret += f(pos + 2);
+                } else if (s[pos] == '2' && s[pos + 1] >= '0' && s[pos + 1] <= '6') {
+                    ret += f(pos + 2);
                 }
-            } else {
-                f(pos + 1);
             }
         }
+
+        cache[pos] = ret;
+        return ret;
     };
 
-    f(0);
-    return ret;
+    return f(0);
 }
 
 int main() {
@@ -44,5 +43,6 @@ int main() {
     assert(numDecodings("226") == 3);
     assert(numDecodings("0") == 0);
     assert(numDecodings("06") == 0);
+    assert(numDecodings("1201234") == 3);
     return 0;
 }
