@@ -47,61 +47,7 @@ bool isValidSudoku(const std::vector<std::vector<char>> &board) {
         }
     }
 
-    std::function<bool(int x, int y)> f;
-    f = [&](int x, int y) -> bool {
-        if (board[x][y] != '.') {
-            if (x == 8 && y == 8) {
-                return true;
-            }
-
-            if (y == 8) {
-                x += 1;
-                y = 0;
-            } else {
-                y += 1;
-            }
-
-            return f(x, y);
-        }
-
-        for (int i = 1; i <= 9; ++i) {
-            bool ok1 = horizontals[x].find(i) == horizontals[x].end();
-            bool ok2 = verticals[y].find(i) == verticals[y].end();
-            int index = (x / 3) * 3 + y / 3;
-            bool ok3 = blocks[index].find(i) == blocks[index].end();
-
-            if (ok1 && ok2 && ok3) {
-                if (x == 8 && y == 8) {
-                    return true;
-                }
-
-                horizontals[x].insert(i);
-                verticals[y].insert(i);
-                blocks[index].insert(i);
-
-                int next_x, next_y;
-                if (y == 8) {
-                    next_x = x + 1;
-                    next_y = 0;
-                } else {
-                    next_x = x;
-                    next_y = y + 1;
-                }
-
-                if (f(next_x, next_y)) {
-                    return true;
-                }
-
-                horizontals[x].erase(i);
-                verticals[y].erase(i);
-                blocks[index].erase(i);
-            }
-        }
-
-        return false;
-    };
-
-    return f(0, 0);
+    return true;
 }
 
 int main() {
