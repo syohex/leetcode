@@ -1,6 +1,7 @@
 #include <cassert>
 #include <vector>
 #include <functional>
+#include <map>
 
 bool canPartitionLSubsets(const std::vector<int> &nums, int k) {
     int sum = 0;
@@ -15,14 +16,22 @@ bool canPartitionLSubsets(const std::vector<int> &nums, int k) {
     int val = sum / k;
     int len = nums.size();
 
+    std::map<std::vector<bool>, bool> cache;
     std::function<bool(int sum, int count, std::vector<bool> &checked)> f;
     f = [&](int sum, int count, std::vector<bool> &checked) -> bool {
         if (count == k) {
+            cache[checked] = true;
             return true;
         }
 
+        if (cache.find(checked) != cache.end()) {
+            return cache.at(checked);
+        }
+
         if (sum == val) {
-            return f(0, count + 1, checked);
+            bool ret = f(0, count + 1, checked);
+            cache[checked] = ret;
+            return ret;
         }
 
         for (int i = 0; i < len; ++i) {
@@ -31,6 +40,7 @@ bool canPartitionLSubsets(const std::vector<int> &nums, int k) {
 
                 if (sum + nums[i] <= val) {
                     if (f(sum + nums[i], count, checked)) {
+                        cache[checked] = true;
                         return true;
                     }
                 }
@@ -39,6 +49,7 @@ bool canPartitionLSubsets(const std::vector<int> &nums, int k) {
             }
         }
 
+        cache[checked] = false;
         return false;
     };
 
