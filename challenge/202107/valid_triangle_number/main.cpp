@@ -23,7 +23,7 @@ int triangleNumber(std::vector<int> &nums) {
             ret += left - j - 1;
         }
     }
-    
+
     return ret;
 }
 

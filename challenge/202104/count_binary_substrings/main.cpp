@@ -1,7 +1,7 @@
 #include <cassert>
 #include <string>
 
-int countBinarySubstrings(const std::string& s) {
+int countBinarySubstrings(const std::string &s) {
     int limit = s.size();
     int ret = 0;
     for (int i = 0; i < limit - 1;) {

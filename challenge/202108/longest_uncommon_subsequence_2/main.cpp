@@ -11,7 +11,7 @@ int findLUSlength(const std::vector<std::string> &strs) {
             return false;
         }
 
-		int i = 0;
+        int i = 0;
         for (int j = 0; i < len_a && j < len_b; ++j) {
             if (a[i] == b[j]) {
                 ++i;

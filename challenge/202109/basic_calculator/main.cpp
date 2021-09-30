@@ -4,7 +4,7 @@
 #include <vector>
 #include <stack>
 
-int calculate(const std::string& s) {
+int calculate(const std::string &s) {
     struct Term {
         bool is_op;
         union {
@@ -80,7 +80,7 @@ int calculate(const std::string& s) {
     }
 
     std::stack<std::int64_t> nums;
-    for (const auto& term : rpn) {
+    for (const auto &term : rpn) {
         if (term.is_op) {
             if (term.u.op == '+') {
                 auto num2 = nums.top();

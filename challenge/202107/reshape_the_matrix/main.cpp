@@ -23,10 +23,11 @@ std::vector<std::vector<int>> matrixReshape(const std::vector<std::vector<int>> 
 
 int main() {
     {
-        std::vector<std::vector<int>> mat {
-            {1, 2}, {3, 4},
+        std::vector<std::vector<int>> mat{
+            {1, 2},
+            {3, 4},
         };
-        std::vector<std::vector<int>> expected {
+        std::vector<std::vector<int>> expected{
             {1, 2, 3, 4},
         };
 
@@ -34,11 +35,13 @@ int main() {
         assert(ret == expected);
     }
     {
-        std::vector<std::vector<int>> mat {
-            {1, 2}, {3, 4},
+        std::vector<std::vector<int>> mat{
+            {1, 2},
+            {3, 4},
         };
-        std::vector<std::vector<int>> expected {
-            {1, 2}, {3, 4},
+        std::vector<std::vector<int>> expected{
+            {1, 2},
+            {3, 4},
         };
 
         auto ret = matrixReshape(mat, 2, 4);

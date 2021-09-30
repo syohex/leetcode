@@ -23,12 +23,12 @@ bool judgeSquareSum(int c) {
 }
 
 int main() {
-	assert(judgeSquareSum(5));
-	assert(!judgeSquareSum(3));
-	assert(judgeSquareSum(4));
-	assert(judgeSquareSum(2));
-	assert(judgeSquareSum(1));
-	assert(judgeSquareSum(37));
-	assert(judgeSquareSum(40));
-	return 0;
+    assert(judgeSquareSum(5));
+    assert(!judgeSquareSum(3));
+    assert(judgeSquareSum(4));
+    assert(judgeSquareSum(2));
+    assert(judgeSquareSum(1));
+    assert(judgeSquareSum(37));
+    assert(judgeSquareSum(40));
+    return 0;
 }

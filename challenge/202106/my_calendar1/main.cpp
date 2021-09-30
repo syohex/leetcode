@@ -8,7 +8,7 @@ class MyCalendar {
     }
 
     bool book(int start, int end) {
-        for (const auto& p : v_) {
+        for (const auto &p : v_) {
             if (start >= p.second) {
                 continue;
             }
@@ -36,25 +36,25 @@ class MyCalendar {
 };
 
 int main() {
-//     {
-//         MyCalendar c;
-//         assert(c.book(10, 20));
-//         assert(!c.book(15, 25));
-//         assert(c.book(20, 30));
-//     }
-//     {
-//         MyCalendar c;
-//         assert(c.book(47, 50));
-//         assert(c.book(33, 41));
-//         assert(!c.book(39, 45));
-//         assert(!c.book(33, 42));
-//         assert(c.book(25, 32));
-//         assert(!c.book(26, 35));
-//         assert(c.book(19, 25));
-//         assert(c.book(3, 8));
-//         assert(c.book(8, 13));
-//         assert(!c.book(18, 27));
-//     }
+    //     {
+    //         MyCalendar c;
+    //         assert(c.book(10, 20));
+    //         assert(!c.book(15, 25));
+    //         assert(c.book(20, 30));
+    //     }
+    //     {
+    //         MyCalendar c;
+    //         assert(c.book(47, 50));
+    //         assert(c.book(33, 41));
+    //         assert(!c.book(39, 45));
+    //         assert(!c.book(33, 42));
+    //         assert(c.book(25, 32));
+    //         assert(!c.book(26, 35));
+    //         assert(c.book(19, 25));
+    //         assert(c.book(3, 8));
+    //         assert(c.book(8, 13));
+    //         assert(!c.book(18, 27));
+    //     }
     {
         MyCalendar c;
         assert(c.book(20, 29));

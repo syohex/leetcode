@@ -71,18 +71,10 @@ int main() {
     }
     {
         std::vector<std::vector<int>> mat{
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
+            {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0},
         };
         std::vector<std::vector<int>> expected{
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0},
+            {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 0},
         };
         auto ret = updateMatrix(mat);
         assert(ret == expected);

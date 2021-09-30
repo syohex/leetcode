@@ -14,7 +14,7 @@ std::vector<int> getMaximumXor(const std::vector<int> &nums, int maximumBit) {
     unsigned int mask = std::pow(2, maximumBit) - 1;
     std::vector<int> ret;
     for (int x : xors) {
-        ret.push_back(~x&mask);
+        ret.push_back(~x & mask);
     }
 
     return ret;
