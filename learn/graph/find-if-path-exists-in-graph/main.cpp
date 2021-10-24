@@ -1,20 +1,18 @@
 #include <cassert>
 #include <vector>
-#include <map>
-#include <set>
 #include <stack>
 
 bool validPath(int n, const std::vector<std::vector<int>> &edges, int start, int end) {
-    std::map<int, std::set<int>> graph;
+    std::vector<std::vector<int>> graph(n);
     for (const auto &edge : edges) {
-        graph[edge[0]].insert(edge[1]);
-        graph[edge[1]].insert(edge[0]);
+        graph[edge[0]].push_back(edge[1]);
+        graph[edge[1]].push_back(edge[0]);
     }
 
     std::stack<int> stack;
     stack.push(start);
 
-    std::set<int> checked;
+    std::vector<bool> checked(n, false);
     while (!stack.empty()) {
         int current = stack.top();
         stack.pop();
@@ -22,10 +20,10 @@ bool validPath(int n, const std::vector<std::vector<int>> &edges, int start, int
             return true;
         }
 
-        checked.insert(current);
+        checked[current] = true;
 
         for (int p : graph[current]) {
-            if (checked.find(p) != checked.end()) {
+            if (checked[p]) {
                 continue;
             }
 
