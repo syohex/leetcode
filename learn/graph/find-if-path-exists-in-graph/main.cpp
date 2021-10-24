@@ -22,7 +22,7 @@ bool validPath(int n, const std::vector<std::vector<int>> &edges, int start, int
             return true;
         }
 
-        checked.insert(start);
+        checked.insert(current);
 
         for (int p : graph[current]) {
             if (checked.find(p) != checked.end()) {
@@ -45,5 +45,10 @@ int main() {
         std::vector<std::vector<int>> edges{{0, 1}, {0, 2}, {3, 5}, {5, 4}, {4, 3}};
         assert(!validPath(6, edges, 0, 5));
     }
+    {
+        std::vector<std::vector<int>> edges{{4, 3}, {1, 4}, {4, 8}, {1, 7}, {6, 4}, {4, 2}, {7, 4}, {4, 0}, {0, 9}, {5, 4}};
+        assert(validPath(10, edges, 5, 9));
+    }
+
     return 0;
 }
