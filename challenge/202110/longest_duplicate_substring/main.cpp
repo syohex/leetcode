@@ -28,6 +28,10 @@ std::string longestDupString(const std::string &s) {
             if (p > max) {
                 max = p;
                 max_pos = i;
+
+                if (max == len - i - 1) {
+                    return s.substr(max_pos, max);
+                }
             }
         }
     }
@@ -42,5 +46,7 @@ std::string longestDupString(const std::string &s) {
 int main() {
     assert(longestDupString("banana") == "ana");
     assert(longestDupString("abcd") == "");
+    assert(longestDupString("aaaaa") == "aaaa");
+    assert(longestDupString("baaaaa") == "aaaa");
     return 0;
 }
