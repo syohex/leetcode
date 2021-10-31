@@ -37,6 +37,8 @@ Node *flatten(Node *head) {
     dummyPrev->next = head;
 
     f(dummyPrev, head);
+    delete dummyPrev;
+
     head->prev = nullptr;
     return head;
 }
