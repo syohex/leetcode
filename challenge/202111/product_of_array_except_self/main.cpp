@@ -1,38 +1,23 @@
 #include <cassert>
 #include <vector>
-#include <set>
+#include <cstdio>
 
 std::vector<int> productExceptSelf(const std::vector<int> &nums) {
-    std::set<size_t> zeros;
+    int len = nums.size();
+    std::vector<int> left_acc(nums.size()), right_acc(nums.size());
+    left_acc[0] = 1;
+    right_acc[len - 1] = 1;
 
-    int mul = 1;
-    for (size_t i = 0; i < nums.size(); ++i) {
-        if (nums[i] == 0) {
-            zeros.insert(i);
-        } else {
-            mul *= nums[i];
-        }
+    for (int i = 1; i < len; ++i) {
+        left_acc[i] = left_acc[i - 1] * nums[i - 1];
     }
-
-    if (zeros.size() >= 2) {
-        return std::vector<int>(nums.size(), 0);
+    for (int i = len - 2; i >= 0; --i) {
+        right_acc[i] = right_acc[i + 1] * nums[i + 1];
     }
 
     std::vector<int> ret;
-    if (zeros.empty()) {
-        for (size_t i = 0; i < nums.size(); ++i) {
-            ret.push_back(mul / nums[i]);
-        }
-
-        return ret;
-    }
-
-    for (size_t i = 0; i < nums.size(); ++i) {
-        if (zeros.find(i) != zeros.end()) {
-            ret.push_back(mul);
-        } else {
-            ret.push_back(0);
-        }
+    for (int i = 0; i < len; ++i) {
+        ret.push_back(left_acc[i] * right_acc[i]);
     }
 
     return ret;
