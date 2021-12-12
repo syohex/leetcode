@@ -9,25 +9,32 @@ bool canPartition(const std::vector<int> &nums) {
         sum += n;
     }
 
+    if (sum % 2 != 0) {
+        return false;
+    }
+
+    int subset_sum = sum / 2;
     std::map<size_t, std::map<int, bool>> cache;
-    std::function<bool(size_t pos, int acc)> f;
-    f = [&](size_t pos, int acc) -> bool {
-        if (acc == sum - acc) {
+    std::function<bool(int pos, int acc)> f;
+    f = [&](int pos, int acc) -> bool {
+        if (acc == 0) {
             return true;
         }
-        if (pos >= nums.size()) {
+        if (pos < 0 || acc < 0) {
             return false;
         }
+
         if (cache[pos].find(acc) != cache[pos].end()) {
             return cache[pos][acc];
         }
 
-        bool ret = f(pos + 1, acc + nums[pos]) || f(pos + 1, acc);
+        bool ret = f(pos - 1, acc - nums[pos]) || f(pos - 1, acc);
         cache[pos][acc] = ret;
         return ret;
     };
 
-    return f(0, 0);
+    int len = nums.size();
+    return f(len - 1, subset_sum);
 }
 
 int main() {
