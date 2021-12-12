@@ -1,6 +1,7 @@
 #include <cassert>
 #include <vector>
 #include <functional>
+#include <map>
 
 bool canPartition(const std::vector<int> &nums) {
     int sum = 0;
@@ -8,6 +9,7 @@ bool canPartition(const std::vector<int> &nums) {
         sum += n;
     }
 
+    std::map<size_t, std::map<int, bool>> cache;
     std::function<bool(size_t pos, int acc)> f;
     f = [&](size_t pos, int acc) -> bool {
         if (acc == sum - acc) {
@@ -16,8 +18,13 @@ bool canPartition(const std::vector<int> &nums) {
         if (pos >= nums.size()) {
             return false;
         }
+        if (cache[pos].find(acc) != cache[pos].end()) {
+            return cache[pos][acc];
+        }
 
-        return f(pos + 1, acc + nums[pos]) || f(pos + 1, acc);
+        bool ret = f(pos + 1, acc + nums[pos]) || f(pos + 1, acc);
+        cache[pos][acc] = ret;
+        return ret;
     };
 
     return f(0, 0);
