@@ -6,39 +6,46 @@
 #include <limits>
 
 std::vector<int> findMinHeightTrees(int n, const std::vector<std::vector<int>> &edges) {
-    std::map<int, std::vector<int>> graph;
-    for (const auto &edge : edges) {
-        graph[edge[0]].push_back(edge[1]);
-        graph[edge[1]].push_back(edge[0]);
+    if (n <= 2) {
+        std::vector<int> ret;
+        for (int i = 0; i < n; ++i) {
+            ret.push_back(i);
+        }
+        return ret;
     }
 
-    std::function<int(int dist, int p, std::vector<bool> &checked)> f;
-    f = [&](int dist, int p, std::vector<bool> &checked) -> int {
-        int ret = dist;
-        for (const auto &node : graph[p]) {
-            if (checked[node]) {
-                continue;
-            }
+    std::map<int, std::set<int>> graph;
+    for (const auto &edge : edges) {
+        graph[edge[0]].insert(edge[1]);
+        graph[edge[1]].insert(edge[0]);
+    }
 
-            checked[node] = true;
-            ret = std::max(ret, f(dist + 1, node, checked));
-            checked[node] = false;
+    std::set<int> leaves;
+    for (const auto &it : graph) {
+        const auto &nodes = it.second;
+        if (nodes.size() == 1) {
+            leaves.insert(it.first);
+        }
+    }
+
+    int left_nodes = n;
+    while (left_nodes > 2) {
+        left_nodes -= static_cast<int>(leaves.size());
+
+        std::set<int> new_leaves;
+        for (int leaf : leaves) {
+            for (int node : graph[leaf]) {
+                graph[node].erase(leaf);
+                if (graph[node].size() == 1) {
+                    new_leaves.insert(node);
+                }
+            }
         }
 
-        return ret;
-    };
-
-    std::map<int, std::vector<int>> m;
-    int min_dist = std::numeric_limits<int>::max();
-    for (int i = 0; i < n; ++i) {
-        std::vector<bool> checked(n, false);
-        checked[i] = true;
-        int dist = f(1, i, checked);
-        min_dist = std::min(min_dist, dist);
-        m[dist].push_back(i);
+        leaves = std::move(new_leaves);
     }
 
-    return m[min_dist];
+    return std::vector<int>(leaves.begin(), leaves.end());
 }
 
 int main() {
