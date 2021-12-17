@@ -7,18 +7,22 @@ int maximalSquare(const std::vector<std::vector<char>> &matrix) {
     int cols = matrix[0].size();
 
     std::vector<std::vector<int>> dp(rows, std::vector<int>(cols, 0));
+    bool has_one = false;
 
     for (int i = 0; i < rows; ++i) {
         if (matrix[i][0] == '1') {
             dp[i][0] = 1;
+            has_one = true;
         }
     }
     for (int i = 0; i < cols; ++i) {
         if (matrix[0][i] == '1') {
             dp[0][i] = 1;
+            has_one = true;
         }
     }
 
+    int max_size = has_one ? 1 : 0;
     for (int i = 1; i < rows; ++i) {
         for (int j = 1; j < cols; ++j) {
             if (matrix[i][j] != '1') {
@@ -28,30 +32,14 @@ int maximalSquare(const std::vector<std::vector<char>> &matrix) {
             if (matrix[i - 1][j - 1] == '0') {
                 dp[i][j] = 1;
             } else {
-                int limit = dp[i - 1][j - 1];
-                int row_ones = 1;
-                for (int m = 1; m <= limit && matrix[i - m][j] == '1'; ++m) {
-                    ++row_ones;
-                }
-
-                int col_ones = 1;
-                for (int m = 1; m <= limit && matrix[i][j - m] == '1'; ++m) {
-                    ++col_ones;
-                }
-
-                dp[i][j] = std::min(row_ones, col_ones);
+                dp[i][j] = std::min({dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]}) + 1;
             }
+
+            max_size = std::max(max_size, dp[i][j]);
         }
     }
 
-    int ret = 0;
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            ret = std::max(ret, dp[i][j] * dp[i][j]);
-        }
-    }
-
-    return ret;
+    return max_size * max_size;
 }
 
 int main() {
