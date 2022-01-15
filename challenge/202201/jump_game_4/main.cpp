@@ -20,6 +20,7 @@ int minJumps(const std::vector<int> &arr) {
     std::priority_queue<Data, std::vector<Data>, decltype(cmp)> q(cmp);
     q.push({0, 0});
 
+    std::vector<bool> checked(len, false);
     while (!q.empty()) {
         auto d = q.top();
         q.pop();
@@ -28,18 +29,26 @@ int minJumps(const std::vector<int> &arr) {
             return d.count;
         }
 
+        if (checked[d.pos]) {
+            continue;
+        }
+        checked[d.pos] = true;
+
         if (d.pos + 1 < len) {
             q.push({d.pos + 1, d.count + 1});
         }
         if (d.pos - 1 >= 0) {
             q.push({d.pos - 1, d.count + 1});
         }
-        if (m.find(arr[d.pos]) != m.end()) {
+
+        auto it = m.find(arr[d.pos]);
+        if (it != m.end()) {
             for (int p : m[arr[d.pos]]) {
                 if (p != d.pos) {
                     q.push({p, d.count + 1});
                 }
             }
+            m.erase(it);
         }
     }
 
