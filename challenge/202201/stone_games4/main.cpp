@@ -2,30 +2,20 @@
 #include <map>
 #include <cmath>
 #include <functional>
+#include <vector>
 
 bool winnerSquareGame(int n) {
-    std::map<int, bool> cache;
-    cache[0] = false;
-
-    std::function<bool(int remain)> f;
-    f = [&](int remain) -> bool {
-        if (cache.find(remain) != cache.end()) {
-            return cache[remain];
-        }
-
-        int limit = std::sqrt(remain);
-        for (int i = 1; i <= limit; ++i) {
-            if (!f(remain - (i * i))) {
-                cache[remain] = true;
-                return true;
+    std::vector<bool> dp(n + 1, false);
+    for (int i = 0; i <= n; ++i) {
+        for (int j = 1; j * j <= i; ++j) {
+            if (!dp[i - (j * j)]) {
+                dp[i] = true;
+                break;
             }
         }
+    }
 
-        cache[remain] = false;
-        return false;
-    };
-
-    return f(n);
+    return dp[n];
 }
 
 int main() {
