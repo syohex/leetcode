@@ -17,61 +17,44 @@ struct TreeNode {
 };
 
 TreeNode *createBinaryTree(const std::vector<std::vector<int>> &descriptions) {
-    struct Data {
-        int left = -1;
-        int right = -1;
-    };
-
-    std::map<int, Data> graph;
-    std::set<int> parents;
+    std::map<int, TreeNode *> graph;
+    std::map<int, int> parents;
     for (const auto &desc : descriptions) {
-        parents.insert(desc[0]);
-        if (desc[2] == 1) {
-            graph[desc[0]].left = desc[1];
+        TreeNode *parent;
+        if (graph.find(desc[0]) != graph.end()) {
+            parent = graph[desc[0]];
         } else {
-            graph[desc[0]].right = desc[1];
+            parent = new TreeNode(desc[0]);
+        }
+
+        graph[desc[0]] = parent;
+
+        parents[desc[0]] += desc[0];
+        parents[desc[1]] -= 3 * desc[1];
+
+        TreeNode *child;
+        if (graph.find(desc[1]) != graph.end()) {
+            child = graph[desc[1]];
+        } else {
+            child = new TreeNode(desc[1]);
+        }
+
+        if (desc[2] == 1) {
+            parent->left = child;
+        } else {
+            parent->right = child;
+        }
+        graph[desc[1]] = child;
+    }
+
+    for (const auto &it : parents) {
+        if (it.second > 0) {
+            return graph[it.first];
         }
     }
 
-    int root = -1;
-    for (int parent : parents) {
-        bool is_child = false;
-        for (const auto &it : graph) {
-            if (it.second.left == parent || it.second.right == parent) {
-                is_child = true;
-                break;
-            }
-        }
-
-        if (!is_child) {
-            root = parent;
-            break;
-        }
-    }
-
-    TreeNode *ret = new TreeNode(root);
-    std::deque<TreeNode *> q;
-    q.push_back(ret);
-
-    while (!q.empty()) {
-        TreeNode *r = q.front();
-        q.pop_front();
-
-        if (graph.find(r->val) == graph.end()) {
-            continue;
-        }
-
-        if (graph[r->val].left != -1) {
-            r->left = new TreeNode(graph[r->val].left);
-            q.push_back(r->left);
-        }
-        if (graph[r->val].right != -1) {
-            r->right = new TreeNode(graph[r->val].right);
-            q.push_back(r->right);
-        }
-    }
-
-    return ret;
+    // never reach here
+    return nullptr;
 }
 
 int main() {
