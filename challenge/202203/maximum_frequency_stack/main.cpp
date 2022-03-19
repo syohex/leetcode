@@ -1,5 +1,6 @@
 #include <cassert>
 #include <queue>
+#include <map>
 #include <vector>
 #include <cstdio>
 
@@ -7,66 +8,37 @@ class FreqStack {
   public:
     struct Data {
         int value;
-        std::vector<int> positions;
-    };
+        int id;
+        int count;
 
-    struct Compare {
-        bool operator()(Data &a, Data &b) const {
-            if (a.positions.size() == b.positions.size()) {
-                return a.positions.back() < b.positions.back();
+        bool operator<(const Data &d) const {
+            if (count != d.count) {
+                return count < d.count;
             }
 
-            return a.positions.size() < b.positions.size();
+            return id < d.id;
         }
     };
 
-    FreqStack() : pos_(0) {
+    FreqStack() : id_(0) {
     }
 
     void push(int x) {
-        std::vector<Data> tmp;
-        bool found = false;
-        while (!q_.empty()) {
-            Data d = q_.top();
-            q_.pop();
-
-            if (d.value == x) {
-                d.positions.push_back(pos_);
-                q_.push(d);
-                found = true;
-                break;
-            }
-
-            tmp.push_back(std::move(d));
-        }
-
-        if (!found) {
-            q_.push({x, {pos_}});
-        }
-
-        for (auto &&a : tmp) {
-            q_.push(a);
-        }
-
-        ++pos_;
+        ++count_[x];
+        q_.push({x, id_++, count_[x]});
     }
 
     int pop() {
-        Data d = q_.top();
+        int ret = q_.top().value;
         q_.pop();
 
-        int ret = d.value;
-        d.positions.pop_back();
-
-        if (!d.positions.empty()) {
-            q_.push(std::move(d));
-        }
-
+        --count_[ret];
         return ret;
     }
 
-    std::priority_queue<Data, std::vector<Data>, Compare> q_;
-    int pos_;
+    std::priority_queue<Data, std::vector<Data>> q_;
+    std::map<int, int> count_;
+    int id_;
 };
 
 int main() {
