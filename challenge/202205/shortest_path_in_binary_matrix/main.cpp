@@ -1,36 +1,28 @@
 #include <cassert>
 #include <vector>
 #include <queue>
-#include <set>
 
-int shortestPathBinaryMatrix(const std::vector<std::vector<int>> &grid) {
-    if (grid[0][0] == 1) {
-        return -1;
-    }
-
+int shortestPathBinaryMatrix(std::vector<std::vector<int>> &grid) {
     struct Data {
         int row;
         int col;
         int cost;
     };
 
-    const auto cmp = [](const Data &a, const Data &b) { return a.cost > b.cost; };
-
-    std::priority_queue<Data, std::vector<Data>, decltype(cmp)> q(cmp);
-    q.push({0, 0, 1});
+    std::deque<Data> q;
+    if (grid[0][0] == 0) {
+        q.push_back({0, 0, 1});
+        grid[0][0] = 1;
+    }
 
     int rows = grid.size();
     int cols = grid[0].size();
 
-    std::set<std::pair<int, int>> visited;
-
     std::vector<std::pair<int, int>> steps{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}};
 
     while (!q.empty()) {
-        Data d = q.top();
-        q.pop();
-
-        visited.insert({d.row, d.col});
+        Data d = q.front();
+        q.pop_front();
 
         if (d.row == rows - 1 && d.col == cols - 1) {
             return d.cost;
@@ -41,9 +33,8 @@ int shortestPathBinaryMatrix(const std::vector<std::vector<int>> &grid) {
             int col = d.col + step.second;
 
             if (row >= 0 && row < rows && col >= 0 && col < cols && grid[row][col] == 0) {
-                if (visited.find({row, col}) == visited.end()) {
-                    q.push({row, col, d.cost + 1});
-                }
+                q.push_back({row, col, d.cost + 1});
+                grid[row][col] = 1;
             }
         }
     }
