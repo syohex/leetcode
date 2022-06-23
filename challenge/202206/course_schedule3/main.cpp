@@ -1,35 +1,25 @@
 #include <cassert>
 #include <vector>
-#include <map>
-#include <functional>
 #include <algorithm>
+#include <queue>
 
 int scheduleCourse(std::vector<std::vector<int>> &courses) {
     std::sort(courses.begin(), courses.end(), [](const std::vector<int> &a, const std::vector<int> &b) { return a[1] < b[1]; });
 
-    std::function<int(int time, int i, std::map<std::vector<int>, int> &cache)> f;
-    f = [&](int time, int i, std::map<std::vector<int>, int> &cache) -> int {
-        if (i == courses.size()) {
-            return 0;
+    std::priority_queue<int> q;
+    int time = 0;
+    for (const auto &course : courses) {
+        if (time + course[0] <= course[1]) {
+            time += course[0];
+            q.push(course[0]);
+        } else if (!q.empty() && course[0] < q.top()) {
+            time += course[0] - q.top();
+            q.pop();
+            q.push(course[0]);
         }
+    }
 
-        const std::vector<int> key{time, i};
-        if (cache.find(key) != cache.end()) {
-            return cache[key];
-        }
-
-        int ret1 = 0;
-        if (time + courses[i][0] <= courses[i][1]) {
-            ret1 = 1 + f(time + courses[i][0], i + 1, cache);
-        }
-
-        int ret2 = f(time, i + 1, cache);
-        cache[key] = std::max(ret1, ret2);
-        return cache[key];
-    };
-
-    std::map<std::vector<int>, int> cache;
-    return f(0, 0, cache);
+    return q.size();
 }
 
 int main() {
@@ -52,6 +42,16 @@ int main() {
         std::vector<std::vector<int>> courses{{1, 2}, {2, 3}};
         int ret = scheduleCourse(courses);
         assert(ret == 2);
+    }
+    {
+        std::vector<std::vector<int>> courses{{5, 5}, {4, 6}, {2, 6}};
+        int ret = scheduleCourse(courses);
+        assert(ret == 2);
+    }
+    {
+        std::vector<std::vector<int>> courses{{7, 17}, {3, 12}, {10, 20}, {9, 10}, {5, 20}, {10, 19}, {4, 18}};
+        int ret = scheduleCourse(courses);
+        assert(ret == 4);
     }
     return 0;
 }
