@@ -4,11 +4,13 @@
 #include <map>
 #include <algorithm>
 #include <cstdio>
+#include <cstring>
 
 int minCost(const std::vector<int> &houses, const std::vector<std::vector<int>> &cost, int m, int n, int target) {
     constexpr int MAX_COST = 1'000'001;
 
-    std::map<std::vector<int>, int> cache;
+    int cache[100][100][21];
+    std::memset(cache, -1, sizeof(cache));
 
     std::function<int(int pos, int count, int prev)> f;
     f = [&](int pos, int count, int prev) -> int {
@@ -20,9 +22,8 @@ int minCost(const std::vector<int> &houses, const std::vector<std::vector<int>> 
             return MAX_COST;
         }
 
-        const std::vector<int> key{pos, count, prev};
-        if (cache.find(key) != cache.end()) {
-            return cache[key];
+        if (cache[pos][count][prev] != -1) {
+            return cache[pos][count][prev];
         }
 
         int ret = MAX_COST;
@@ -45,11 +46,11 @@ int minCost(const std::vector<int> &houses, const std::vector<std::vector<int>> 
             }
         }
 
-        cache[key] = ret;
+        cache[pos][count][prev] = ret;
         return ret;
     };
 
-    int ret = f(0, 0, -1);
+    int ret = f(0, 0, 0);
     return ret == MAX_COST ? -1 : ret;
 }
 
