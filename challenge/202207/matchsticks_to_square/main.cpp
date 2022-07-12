@@ -1,47 +1,31 @@
 #include <cassert>
 #include <vector>
-#include <map>
 #include <functional>
 #include <algorithm>
 #include <cstdio>
 
-bool makesquare(const std::vector<int> &matchsticks) {
-    std::function<bool(size_t pos, int len, int count, int edge_len, std::map<int, int> &m)> f;
-    f = [&](size_t pos, int len, int count, int edge_len, std::map<int, int> &m) -> bool {
-        if (pos == 4) {
-            return count == matchsticks.size();
+bool makesquare(std::vector<int> &matchsticks) {
+    std::function<bool(size_t pos, std::vector<int> & edges, int edge_len, const std::vector<int> &matchsticks)> f;
+    f = [&f](size_t pos, std::vector<int> &edges, int edge_len, const std::vector<int> &matchsticks) -> bool {
+        if (pos == matchsticks.size()) {
+            return edges[0] == edges[1] && edges[1] == edges[2] && edges[2] == edges[3];
         }
 
-        int rest = edge_len - len;
-        for (const auto &it : m) {
-            if (it.second == 0) {
-                continue;
-            }
-
-            if (it.first > rest) {
-                break;
-            }
-
-            --m[it.first];
-            if (it.first + len == edge_len) {
-                if (f(pos + 1, 0, count + 1, edge_len, m)) {
+        for (int i = 0; i < 4; ++i) {
+            if (edges[i] + matchsticks[pos] <= edge_len) {
+                edges[i] += matchsticks[pos];
+                if (f(pos + 1, edges, edge_len, matchsticks)) {
                     return true;
                 }
-            } else {
-                if (f(pos, len + it.first, count + 1, edge_len, m)) {
-                    return true;
-                }
+                edges[i] -= matchsticks[pos];
             }
-            ++m[it.first];
         }
 
         return false;
     };
 
-    std::map<int, int> m;
     int sum = 0;
     for (int a : matchsticks) {
-        ++m[a];
         sum += a;
     }
 
@@ -49,7 +33,10 @@ bool makesquare(const std::vector<int> &matchsticks) {
         return false;
     }
 
-    return f(0, 0, 0, sum / 4, m);
+    std::sort(matchsticks.begin(), matchsticks.end());
+
+    std::vector<int> edges(4, 0);
+    return f(0, edges, sum / 4, matchsticks);
 }
 
 int main() {
