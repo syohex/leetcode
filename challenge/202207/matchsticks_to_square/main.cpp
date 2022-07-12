@@ -33,7 +33,7 @@ bool makesquare(std::vector<int> &matchsticks) {
         return false;
     }
 
-    std::sort(matchsticks.begin(), matchsticks.end());
+    std::sort(matchsticks.begin(), matchsticks.end(), std::greater<int>());
 
     std::vector<int> edges(4, 0);
     return f(0, edges, sum / 4, matchsticks);
@@ -56,5 +56,6 @@ int main() {
         std::vector<int> matchsticks{4, 13, 1, 1, 14, 15, 1, 3, 13, 1, 3, 5, 2, 8, 12};
         assert(!makesquare(matchsticks));
     }
+
     return 0;
 }
