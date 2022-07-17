@@ -3,35 +3,26 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
+#include <vector>
 
 int kInversePairs(int n, int k) {
     constexpr std::int64_t MOD = 1'000'000'007;
-    int cache[1001][1001];
-    std::memset(cache, -1, sizeof(cache));
+    std::vector<std::vector<int>> dp(n + 1, std::vector<int>(k + 1, 0));
 
-    std::function<std::int64_t(int n, int k)> f;
-    f = [&](int n, int k) -> std::int64_t {
-        if (n <= 0) {
-            return 0;
+    for (int i = 1; i <= n; ++i) {
+        for (int j = 0; j <= k; ++j) {
+            if (j == 0) {
+                dp[i][j] = 1;
+            } else {
+                int len = std::min(i - 1, j);
+                for (int k = 0; k <= len; ++k) {
+                    dp[i][j] = (dp[i][j] + dp[i - 1][j - k]) % MOD;
+                }
+            }
         }
-        if (k <= 0) {
-            return 1;
-        }
-        if (cache[n][k] != -1) {
-            return cache[n][k];
-        }
+    }
 
-        std::int64_t ret = 0;
-        int len = std::min(n - 1, k);
-        for (int i = 0; i <= len; ++i) {
-            ret = (ret + f(n - 1, k - i)) % MOD;
-        }
-
-        cache[n][k] = ret;
-        return ret;
-    };
-
-    return f(n, k);
+    return dp[n][k];
 }
 
 int main() {
