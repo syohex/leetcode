@@ -1,60 +1,31 @@
 #include <cassert>
-#include <queue>
+#include <stack>
 #include <vector>
 #include <cstdio>
 
-struct Data {
-    size_t pos;
-    int val;
-};
-
-struct Compare {
-    bool operator()(const Data &a, const Data &b) const {
-        if (a.val == b.val) {
-            return a.pos > b.pos;
-        }
-
-        return a.val < b.val;
-    }
-};
-
 class StockSpanner {
   public:
-    StockSpanner() : pos_(0) {
-        q_.push({0, 0});
+    StockSpanner() {
     }
 
     int next(int price) {
-        size_t len = q_.size();
-        std::vector<Data> tmp;
+        int ret = 1;
 
-        Data bigger_point{0, 0};
-        while (!q_.empty()) {
-            Data d = q_.top();
-            if (d.val <= price) {
+        while (!stack_.empty()) {
+            auto p = stack_.top();
+            if (p.first > price) {
                 break;
             }
 
-            if (d.pos > bigger_point.pos) {
-                bigger_point = d;
-            }
-
-            q_.pop();
-            tmp.push_back(d);
+            ret += p.second;
+            stack_.pop();
         }
 
-        int ret = len - bigger_point.pos;
-
-        for (Data &d : tmp) {
-            q_.emplace(std::move(d));
-        }
-
-        q_.push({len, price});
+        stack_.push({price, ret});
         return ret;
     }
 
-    std::priority_queue<Data, std::vector<Data>, Compare> q_;
-    size_t pos_;
+    std::stack<std::pair<int, int>> stack_;
 };
 
 int main() {
