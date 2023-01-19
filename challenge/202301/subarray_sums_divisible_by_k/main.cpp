@@ -1,21 +1,19 @@
 #include <cassert>
 #include <vector>
+#include <map>
 
 int subArraysDivByK(const std::vector<int> &nums, int k) {
-    int len = nums.size();
-    std::vector<int> acc(len + 1, 0);
-    for (int i = 0; i < len; ++i) {
-        acc[i + 1] = nums[i] + acc[i];
-    }
+    std::map<int, int> m;
+    m[0] = 1;
 
     int ret = 0;
-    for (int i = 1; i <= len; ++i) {
-        for (int j = 0; j < i; ++j) {
-            if ((acc[i] - acc[j]) % k == 0) {
-                ++ret;
-            }
-        }
+    int prefix_sum = 0;
+    for (int num : nums) {
+        prefix_sum = (prefix_sum + (num % k) + k) % k;
+        ret += m[prefix_sum];
+        m[prefix_sum] += 1;
     }
+
     return ret;
 }
 
@@ -29,6 +27,11 @@ int main() {
         std::vector<int> nums{5};
         int ret = subArraysDivByK(nums, 9);
         assert(ret == 0);
+    }
+    {
+        std::vector<int> nums{7, 4, -10};
+        int ret = subArraysDivByK(nums, 5);
+        assert(ret == 1);
     }
     return 0;
 }
