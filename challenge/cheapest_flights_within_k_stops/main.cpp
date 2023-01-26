@@ -15,14 +15,12 @@ int findCheapestPrice(int n, const std::vector<std::vector<int>> &flights, int s
     struct Data {
         int city;
         int costs;
-        std::vector<bool> visited;
     };
 
     std::deque<Data> q;
-    std::vector<bool> visited(n, false);
-    visited[src] = true;
-    q.push_back({src, 0, visited});
+    q.push_back({src, 0});
 
+    std::vector<int> min_costs(n, std::numeric_limits<int>::max());
     int ret = std::numeric_limits<int>::max();
     bool found = false;
     for (int stop = -1; stop <= k; ++stop) {
@@ -35,6 +33,11 @@ int findCheapestPrice(int n, const std::vector<std::vector<int>> &flights, int s
             auto d = q.front();
             q.pop_front();
 
+            if (d.costs >= min_costs[d.city]) {
+                continue;
+            }
+            min_costs[d.city] = d.costs;
+
             if (d.city == dst) {
                 found = true;
                 ret = std::min(ret, d.costs);
@@ -42,11 +45,7 @@ int findCheapestPrice(int n, const std::vector<std::vector<int>> &flights, int s
             }
 
             for (const auto &[next_city, cost] : graph[d.city]) {
-                if (!d.visited[next_city]) {
-                    auto tmp = visited;
-                    tmp[next_city] = true;
-                    q.push_back({next_city, d.costs + cost, tmp});
-                }
+                q.push_back({next_city, d.costs + cost});
             }
         }
     }
