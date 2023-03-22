@@ -15,3 +15,6 @@
 
 # Database
 *.db
+
+# clangd
+compile_flags.txt
