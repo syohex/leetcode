@@ -11,9 +11,9 @@ long long countPairs(int n, const std::vector<std::vector<int>> &edges) {
         graph[edge[1]].push_back(edge[0]);
     }
 
-    std::function<std::vector<int>(int node, std::vector<bool> &visited)> f;
-    f = [&](int node, std::vector<bool> &visited) -> std::vector<int> {
-        std::vector<int> nodes{node};
+    std::function<long long(int node, std::vector<bool> &visited)> f;
+    f = [&](int node, std::vector<bool> &visited) -> long long {
+        long long nodes = 1;
 
         std::queue<int> q;
         q.push(node);
@@ -26,7 +26,7 @@ long long countPairs(int n, const std::vector<std::vector<int>> &edges) {
                 if (!visited[next]) {
                     visited[next] = true;
                     q.push(next);
-                    nodes.push_back(next);
+                    ++nodes;
                 }
             }
         }
@@ -34,21 +34,15 @@ long long countPairs(int n, const std::vector<std::vector<int>> &edges) {
         return nodes;
     };
 
+    long long ret = 0;
+    long long remains = n;
     std::vector<bool> visited(n, false);
-    std::vector<std::vector<int>> islands;
     for (int i = 0; i < n; ++i) {
         if (!visited[i]) {
             visited[i] = true;
             auto nodes = f(i, visited);
-            islands.push_back(std::move(nodes));
-        }
-    }
-
-    long long ret = 0;
-    int len = islands.size();
-    for (int i = 0; i < len; ++i) {
-        for (int j = i + 1; j < len; ++j) {
-            ret += islands[i].size() * islands[j].size();
+            ret += nodes * (remains - nodes);
+            remains -= nodes;
         }
     }
 
