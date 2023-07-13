@@ -8,12 +8,17 @@ bool canFinish(int numCourses, const std::vector<std::vector<int>> &prerequisite
         graph[prequisite[1]].push_back(prequisite[0]);
     }
 
+    std::vector<int> checked(numCourses, false);
     std::function<bool(int node, std::vector<int> &passed)> hasCircle;
     hasCircle = [&](int node, std::vector<int> &passed) -> bool {
         if (passed[node]) {
             return true;
         }
+        if (checked[node]) {
+            return false;
+        }
 
+        checked[node] = true;
         passed[node] = true;
         for (int next : graph[node]) {
             if (hasCircle(next, passed)) {
