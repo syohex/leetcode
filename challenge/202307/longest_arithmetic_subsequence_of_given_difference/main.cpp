@@ -2,19 +2,16 @@
 #include <vector>
 #include <algorithm>
 #include <cstdio>
+#include <map>
 
 int longestSubsequence(const std::vector<int> &arr, int difference) {
     int ret = 1;
-    int len = arr.size();
-    std::vector<int> dp(len, 1);
+    std::map<int, int> m;
 
-    for (int i = 0; i < len; ++i) {
-        for (int j = 0; j < i; ++j) {
-            if (arr[i] - arr[j] == difference) {
-                dp[i] = std::max(dp[i], dp[j] + 1);
-                ret = std::max(ret, dp[i]);
-            }
-        }
+    for (int num : arr) {
+        int prev_len = m[num - difference];
+        m[num] = prev_len + 1;
+        ret = std::max(ret, m[num]);
     }
 
     return ret;
