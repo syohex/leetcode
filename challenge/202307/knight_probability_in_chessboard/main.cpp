@@ -1,34 +1,34 @@
 #include <cassert>
-#include <queue>
 #include <utility>
 #include <vector>
 #include <cstdio>
 
 double knightProbability(int n, int k, int row, int column) {
-    std::queue<std::pair<int, int>> q;
-    q.push({row, column});
-
+    std::vector<std::vector<std::vector<double>>> dp(k + 1, std::vector<std::vector<double>>(n, std::vector<double>(n, 0)));
     std::vector<std::pair<int, int>> steps{{-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}, {2, -1}, {1, -2}};
 
-    for (int i = 0; i < k; ++i) {
-        int len = q.size();
-        for (int j = 0; j < len; ++j) {
-            auto [r, c] = q.front();
-            q.pop();
+    dp[0][row][column] = 1;
 
-            for (const auto &[x, y] : steps) {
-                int new_r = r + x;
-                int new_c = c + y;
-                if (new_r >= 0 && new_r < n && new_c >= 0 && new_c < n) {
-                    q.push({new_r, new_c});
+    for (int time = 1; time <= k; ++time) {
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                for (const auto &[x, y] : steps) {
+                    int prev_r = i - x;
+                    int prev_c = j - y;
+
+                    if (prev_r >= 0 && prev_r < n && prev_c >= 0 && prev_c < n) {
+                        dp[time][i][j] += dp[time - 1][prev_r][prev_c] / 8;
+                    }
                 }
             }
         }
     }
 
-    auto ret = static_cast<double>(q.size());
-    for (int i = 0; i < k; ++i) {
-        ret /= 8.0;
+    double ret = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            ret += dp[k][i][j];
+        }
     }
 
     return ret;
