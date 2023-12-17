@@ -27,39 +27,33 @@ class FoodRatings {
     FoodRatings(const std::vector<std::string> &foods, const std::vector<std::string> &cuisines, const std::vector<int> &ratings) {
         for (size_t i = 0; i < foods.size(); ++i) {
             cuisine_table_[foods[i]] = cuisines[i];
+            food_rating_[foods[i]] = ratings[i];
             score_table_[cuisines[i]].push({ratings[i], foods[i]});
         }
     }
 
     void changeRating(const std::string &food, int newRating) {
+        food_rating_[food] = newRating;
         const std::string &cuisine = cuisine_table_[food];
         auto &q = score_table_[cuisine];
-
-        std::vector<Data> tmp;
-        while (!q.empty()) {
-            auto d = q.top();
-            q.pop();
-
-            if (d.name == food) {
-                q.push({newRating, d.name});
-                break;
-            }
-
-            tmp.push_back(d);
-        }
-
-        for (const auto &d : tmp) {
-            q.push(d);
-        }
+        q.push({newRating, food});
     }
 
     std::string highestRated(const std::string &cuisine) {
         auto &q = score_table_[cuisine];
-        return q.top().name;
+        auto high = q.top();
+
+        while (food_rating_[high.name] != high.rating) {
+            q.pop();
+            high = q.top();
+        }
+        
+        return high.name;
     }
 
     std::map<std::string, ScoreQueue> score_table_;
     std::map<std::string, std::string> cuisine_table_;
+    std::map<std::string, int> food_rating_;
 };
 
 int main() {
