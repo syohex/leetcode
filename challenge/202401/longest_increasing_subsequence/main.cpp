@@ -1,35 +1,23 @@
 #include <cassert>
 #include <vector>
 #include <algorithm>
-#include <functional>
-#include <map>
 #include <cstdio>
 
 int lengthOfLIS(const std::vector<int> &nums) {
-    std::map<std::pair<size_t, int>, int> cache;
-    std::function<int(size_t pos, int prev)> f;
-    f = [&](size_t pos, int prev) -> int {
-        if (pos >= nums.size()) {
-            return 0;
-        }
+    int len = nums.size();
+    std::vector<int> dp(len, 1);
 
-        if (cache.find({pos, prev}) != cache.end()) {
-            return cache[{pos, prev}];
-        }
-
-        int ret = 0;
-        for (size_t i = pos; i < nums.size(); ++i) {
-            if (nums[i] > prev) {
-                ret = std::max(ret, f(i + 1, nums[i]) + 1);
+    int ret = 1;
+    for (int i = 1; i < len; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[i] > nums[j]) {
+                dp[i] = std::max(dp[i], dp[j] + 1);
+                ret = std::max(ret, dp[i]);
             }
-            ret = std::max(ret, f(i + 1, prev));
         }
+    }
 
-        cache[{pos, prev}] = ret;
-        return ret;
-    };
-
-    return f(0, -1000000);
+    return ret;
 }
 
 int main() {
