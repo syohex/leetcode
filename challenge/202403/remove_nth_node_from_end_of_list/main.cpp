@@ -7,9 +7,6 @@ struct ListNode {
 };
 
 ListNode *removeNthFromEnd(ListNode *head, int n) {
-    ListNode *ret = new ListNode(0);
-    ret->next = head;
-
     ListNode *p = head;
     int len = 0;
     while (p != nullptr) {
@@ -17,15 +14,21 @@ ListNode *removeNthFromEnd(ListNode *head, int n) {
         p = p->next;
     }
 
-    p = ret;
+    ListNode *prev = nullptr;
+    p = head;
     int pos = len - n;
     while (pos > 0) {
         --pos;
+        prev = p;
         p = p->next;
     }
 
-    p->next = p->next->next;
-    return ret->next;
+    if (prev == nullptr) {
+        return head->next;
+    }
+
+    prev->next = p->next;
+    return head;
 }
 
 int main() {
