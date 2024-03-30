@@ -2,28 +2,28 @@
 #include <algorithm>
 
 long long countSubarrays(const std::vector<int> &nums, int k) {
-    int max_val = 0;
-    for (int num : nums) {
-        max_val = std::max(max_val, num);
-    }
-
-    int len = nums.size();
-    std::vector<int> acc(len + 1, 0);
-    for (int i = 0; i < len; ++i) {
-        if (nums[i] == max_val) {
-            acc[i + 1] = acc[i] + 1;
-        } else {
-            acc[i + 1] = acc[i];
-        }
-    }
+    int max_val = *std::max_element(nums.begin(), nums.end());
 
     long long ret = 0;
-    for (int i = 1; i <= len; ++i) {
-        for (int j = 0; j <= i; ++j) {
-            if (acc[i] - acc[j] >= k) {
-                ++ret;
-            }
+    size_t left = 0;
+    size_t right = 0;
+
+    int count = 0;
+    while (right < nums.size()) {
+        if (nums[right] == max_val) {
+            ++count;
         }
+
+        while (left < nums.size() && count >= k) {
+            if (nums[left] == max_val) {
+                --count;
+            }
+
+            ++left;
+        }
+
+        ret += left;
+        ++right;
     }
 
     return ret;
