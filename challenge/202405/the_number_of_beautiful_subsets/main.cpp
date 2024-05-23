@@ -7,7 +7,7 @@
 
 int beautifulSubsets(std::vector<int> &nums, int k) {
     std::function<int(std::size_t pos, std::map<int, int> & freq)> f;
-    f = [&](std::size_t pos, std::map<int, int> freq) -> int {
+    f = [&](std::size_t pos, std::map<int, int>& freq) -> int {
         if (pos >= nums.size()) {
             return freq.size() >= 1 ? 1 : 0;
         }
