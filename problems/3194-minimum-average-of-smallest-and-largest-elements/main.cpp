@@ -4,22 +4,14 @@
 #include <cstdio>
 
 double minimumAverage(std::vector<int> &nums) {
-    std::vector<double> average;
+    std::sort(nums.begin(), nums.end());
+
+    double ret = nums.back();
     int len = nums.size();
-
     for (int i = 0; i < len / 2; ++i) {
-        std::sort(nums.begin(), nums.end());
-
-        double min = nums[0];
-        double max = nums[nums.size() - 1];
-        nums.pop_back();
-        std::swap(nums[0], nums.back());
-        nums.pop_back();
-
-        average.push_back((min + max) / 2);
+        ret = std::min(ret, (nums[i] + nums[len - 1 - i]) / 2.0);
     }
-
-    return *std::min_element(average.begin(), average.end());
+    return ret;
 }
 
 int main() {
