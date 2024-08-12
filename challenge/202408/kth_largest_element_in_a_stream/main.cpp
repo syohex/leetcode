@@ -7,30 +7,28 @@ class KthLargest {
   public:
     KthLargest(int k, const std::vector<int> &nums) : k_(k) {
         for (int num : nums) {
-            q_.push(num);
+            (void)add(num);
         }
     }
 
     int add(int val) {
+        if (q_.size() < k_) {
+            q_.push(val);
+            return q_.top();
+        }
+
+        if (q_.top() > val) {
+            return q_.top();
+        }
+
+        q_.pop();
         q_.push(val);
 
-        std::vector<int> tmp;
-        int ret = -1;
-        for (int i = 0; i < k_; ++i) {
-            ret = q_.top();
-            q_.pop();
-            tmp.push_back(ret);
-        }
-
-        for (int v : tmp) {
-            q_.push(v);
-        }
-
-        return ret;
+        return q_.top();
     }
 
-    int k_;
-    std::priority_queue<int, std::vector<int>> q_;
+    std::size_t k_;
+    std::priority_queue<int, std::vector<int>, std::greater<int>> q_;
 };
 
 int main() {
