@@ -5,13 +5,13 @@
 #include <set>
 
 std::vector<std::vector<int>> combinationSum2(std::vector<int> candidates, int target) {
-    std::set<std::vector<int>> s;
+    std::vector<std::vector<int>> ret;
     int len = candidates.size();
 
     std::function<void(int pos, int sum, std::vector<int> &acc)> f;
     f = [&](int pos, int sum, std::vector<int> &acc) {
         if (sum == target) {
-            s.insert(acc);
+            ret.push_back(acc);
             return;
         }
 
@@ -20,9 +20,11 @@ std::vector<std::vector<int>> combinationSum2(std::vector<int> candidates, int t
                 break;
             }
 
-            acc.push_back(candidates[i]);
-            f(i + 1, sum + candidates[i], acc);
-            acc.pop_back();
+            if (i == pos || candidates[i] != candidates[i - 1]) {
+                acc.push_back(candidates[i]);
+                f(i + 1, sum + candidates[i], acc);
+                acc.pop_back();
+            }
         }
     };
 
@@ -30,7 +32,7 @@ std::vector<std::vector<int>> combinationSum2(std::vector<int> candidates, int t
     std::vector<int> acc;
     f(0, 0, acc);
 
-    return std::vector(s.begin(), s.end());
+    return ret;
 }
 
 int main() {
