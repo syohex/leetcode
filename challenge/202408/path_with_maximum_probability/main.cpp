@@ -1,6 +1,7 @@
 #include <cassert>
 #include <vector>
 #include <map>
+#include <queue>
 
 double maxProbability(int n, const std::vector<std::vector<int>> &edges, const std::vector<double> &succProb, int start_node,
                       int end_node) {
@@ -14,18 +15,18 @@ double maxProbability(int n, const std::vector<std::vector<int>> &edges, const s
     }
 
     std::vector<double> max_scores(n, 0);
-    std::vector<std::pair<int, double>> q;
-    q.push_back({start_node, 1.0});
+    std::priority_queue<std::pair<int, double>> q;
+    q.push({start_node, 1.0});
 
     while (!q.empty()) {
-        const auto [node, current_score] = q.back();
-        q.pop_back();
+        const auto [node, current_score] = q.top();
+        q.pop();
 
         for (const auto &[next, score] : graph[node]) {
             double next_score = current_score * score;
             if (next_score > max_scores[next]) {
                 max_scores[next] = next_score;
-                q.push_back({next, next_score});
+                q.push({next, next_score});
             }
         }
     }
