@@ -34,22 +34,18 @@ bool isSubPath(ListNode *head, TreeNode *root) {
             return false;
         }
 
-        if (node->val == list->val) {
-            if (f(list->next, node->left) || f(list->next, node->right)) {
-                return true;
-            }
+        if (node->val != list->val) {
+            return false;
         }
 
-        if (node->val == head->val) {
-            if (f(head->next, node->left) || f(head->next, node->right)) {
-                return true;
-            }
-        }
-
-        return f(head, node->left) || f(head, node->right);
+        return f(list->next, node->left) || f(list->next, node->right);
     };
 
-    return f(head, root);
+    if (root == nullptr) {
+        return false;
+    }
+
+    return f(head, root) || isSubPath(head, root->left) || isSubPath(head, root->right);
 }
 
 int main() {
